@@ -303,6 +303,7 @@ KERNEL_TYPE="custom"
 # Hyprland and Wayland packages
 HYPRLAND_PACKAGES="
     gui-wm/hyprland
+    x11-base/xwayland
     gui-apps/waybar
     gui-apps/mako
     gui-apps/grim
@@ -684,7 +685,8 @@ install_stage3() {
 
     # Determine stage3 URL
     local base_url="https://distfiles.gentoo.org/releases/amd64/autobuilds"
-    local stage3_path=$(wget -qO- "${base_url}/latest-stage3-amd64-openrc.txt" | grep -v "^#" | head -1 | awk '{print $1}')
+    # The file has PGP signature, so we need to extract the actual path (line with .tar.xz)
+    local stage3_path=$(wget -qO- "${base_url}/latest-stage3-amd64-openrc.txt" | grep -E '^[0-9]+.*\.tar\.xz' | head -1 | awk '{print $1}')
 
     if [[ -z "$stage3_path" ]]; then
         log_error "Failed to find stage3 tarball URL"
@@ -732,7 +734,7 @@ RUSTFLAGS="-C target-cpu=${CPU_ARCH}"
 
 # Parallel builds
 MAKEOPTS="-j${MAKE_JOBS}"
-EMERGE_DEFAULT_OPTS="--jobs=${MAKE_JOBS} --load-average=${MAKE_JOBS}"
+EMERGE_DEFAULT_OPTS="--verbose --jobs=${MAKE_JOBS} --load-average=${MAKE_JOBS}"
 
 # Language
 L10N="en sv"
@@ -750,8 +752,8 @@ INPUT_DEVICES="libinput"
 ACCEPT_LICENSE="*"
 
 # USE flags for Wayland/Hyprland setup on HP ZBook Power G9
-USE="wayland vulkan pipewire pulseaudio dbus elogind \
-     -X -systemd -gnome -kde -qt5 \
+USE="wayland X vulkan pipewire pulseaudio dbus elogind \
+     -systemd -gnome -kde -qt5 \
      bluetooth networkmanager \
      nvenc vaapi cuda opencl \
      zstd lz4 lto"
@@ -761,6 +763,14 @@ EOF
     mkdir -p /mnt/gentoo/etc/portage/package.use
     mkdir -p /mnt/gentoo/etc/portage/package.accept_keywords
     mkdir -p /mnt/gentoo/etc/portage/package.license
+
+    # Break circular dependencies
+    cat > /mnt/gentoo/etc/portage/package.use/circular-deps << 'EOF'
+# Break libwebp <-> tiff circular dependency
+media-libs/tiff -webp
+# Break pillow <-> freetype circular dependency
+dev-python/pillow -truetype
+EOF
 
     # NVIDIA driver requirements
     cat > /mnt/gentoo/etc/portage/package.use/nvidia << 'EOF'
@@ -1465,6 +1475,14 @@ install_hyprland() {
 
 $terminal = kitty
 $menu = wofi --show drun
+
+#==============================================================================
+# XWAYLAND
+#==============================================================================
+
+xwayland {
+    force_zero_scaling = true
+}
 
 #==============================================================================
 # MONITOR
