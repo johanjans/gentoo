@@ -330,7 +330,7 @@ BASE_PACKAGES="
     sys-apps/pciutils
     net-misc/chrony
     dev-vcs/git
-    sys-process/htop
+    sys-process/btop
     app-admin/doas
     media-libs/fontconfig
 "
@@ -339,11 +339,17 @@ BASE_PACKAGES="
 # HELPER FUNCTIONS
 #==============================================================================
 
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-CYAN='\033[0;36m'
+# Catppuccin Mocha color palette
+RED='\033[38;2;243;139;168m'      # #f38ba8
+GREEN='\033[38;2;166;227;161m'    # #a6e3a1
+YELLOW='\033[38;2;249;226;175m'   # #f9e2af
+BLUE='\033[38;2;137;180;250m'     # #89b4fa
+CYAN='\033[38;2;148;226;213m'     # #94e2d5 (Teal)
+MAUVE='\033[38;2;203;166;247m'    # #cba6f7
+PEACH='\033[38;2;250;179;135m'    # #fab387
+PINK='\033[38;2;245;194;231m'     # #f5c2e7
+TEXT='\033[38;2;205;214;244m'     # #cdd6f4
+SUBTEXT='\033[38;2;166;173;200m'  # #a6adc8
 NC='\033[0m'
 
 log_info() {
@@ -733,8 +739,11 @@ LDFLAGS="-Wl,-O2 -Wl,--as-needed"
 RUSTFLAGS="-C target-cpu=${CPU_ARCH}"
 
 # Parallel builds
+# MAKEOPTS: threads per package compile
+# --jobs: concurrent package builds (keep low to avoid memory issues)
+# --load-average: stop spawning if system load exceeds this
 MAKEOPTS="-j${MAKE_JOBS}"
-EMERGE_DEFAULT_OPTS="--verbose --jobs=${MAKE_JOBS} --load-average=${MAKE_JOBS}"
+EMERGE_DEFAULT_OPTS="--verbose --jobs=4 --load-average=${MAKE_JOBS}"
 
 # Language
 L10N="en sv"
@@ -1455,6 +1464,10 @@ install_hyprland() {
     # Install dbus
     run_chroot "emerge sys-apps/dbus"
     run_chroot "rc-update add dbus default"
+
+    # Install base packages first
+    log_info "Installing base packages..."
+    run_chroot "emerge ${BASE_PACKAGES}"
 
     # Install Hyprland and related packages
     log_info "Installing Hyprland (this will take a while)..."
@@ -2568,10 +2581,6 @@ install_tools() {
     # Network (NetworkManager for nmcli/nmtui)
     run_chroot "emerge net-misc/networkmanager"
     run_chroot "rc-update add NetworkManager default"
-
-    # Install base packages
-    log_info "Installing base packages..."
-    run_chroot "emerge ${BASE_PACKAGES}"
 
     # Time sync
     run_chroot "rc-update add chronyd default"
