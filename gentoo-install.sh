@@ -780,7 +780,7 @@ gui-libs/aquamarine ~amd64
 gui-apps/hyprlock ~amd64
 gui-apps/hypridle ~amd64
 gui-apps/hyprpaper ~amd64
-sys-apps/xdg-desktop-portal-hyprland ~amd64
+gui-libs/xdg-desktop-portal-hyprland ~amd64
 EOF
 
     log_success "make.conf configured"
