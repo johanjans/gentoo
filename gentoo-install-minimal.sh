@@ -217,12 +217,15 @@ chr "emerge --verbose app-eselect/eselect-repository"
 chr "eselect repository enable guru"
 chr "emerge --sync guru"
 
+# Break freetype <-> harfbuzz circular dependency before @world
+echo "Resolving freetype/harfbuzz circular dependency..."
+chr "USE='-harfbuzz' emerge --verbose --oneshot media-libs/freetype"
+chr "emerge --verbose --oneshot media-libs/harfbuzz"
+chr "emerge --verbose --oneshot media-libs/freetype"
+chr "rm -f /etc/portage/package.use/zzz-bootstrap"
+
 echo "Updating @world (this takes a while)..."
 chr "emerge --verbose --update --deep --newuse @world"
-
-# Remove bootstrap workaround and rebuild with full flags
-chr "rm -f /etc/portage/package.use/zzz-bootstrap"
-chr "emerge --verbose --oneshot media-libs/freetype media-libs/harfbuzz" || true
 
 ###############################################################################
 # LOCALE & TIMEZONE
