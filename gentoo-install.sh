@@ -711,6 +711,15 @@ configure_makeconf() {
     mkdir -p /mnt/gentoo/etc/portage/package.accept_keywords
     mkdir -p /mnt/gentoo/etc/portage/package.license
 
+    # Temporary flags to break circular dependencies (removed after @world update)
+    cat > /mnt/gentoo/etc/portage/package.use/zzz-circular-deps << 'EOF'
+# TEMPORARY: Break circular dependencies for initial bootstrap
+# These are removed after @world and packages are rebuilt with full features
+media-libs/tiff -webp
+media-libs/libwebp -tiff
+dev-python/pillow -truetype
+EOF
+
     # NVIDIA driver requirements
     cat > /mnt/gentoo/etc/portage/package.use/nvidia << 'EOF'
 x11-drivers/nvidia-drivers modules driver
@@ -788,6 +797,15 @@ configure_portage() {
     # Update @world
     log_info "Updating @world set (this will take a long time)..."
     run_chroot "emerge --update --deep --newuse @world"
+
+    # Rebuild packages with full features now that circular deps are resolved
+    log_info "Removing temporary circular dependency workarounds..."
+    run_chroot "rm -f /etc/portage/package.use/zzz-circular-deps"
+
+    log_info "Rebuilding packages with full features..."
+    # Only rebuild if packages are actually installed (they may not be yet)
+    run_chroot "emerge --oneshot --usepkg=n media-libs/tiff media-libs/libwebp 2>/dev/null" || true
+    run_chroot "emerge --oneshot --usepkg=n dev-python/pillow 2>/dev/null" || true
 
     log_success "Portage configured"
 }
