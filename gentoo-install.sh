@@ -713,16 +713,35 @@ configure_makeconf() {
 
     # Temporary flags to break circular dependencies (removed after @world update)
     cat > /mnt/gentoo/etc/portage/package.use/zzz-circular-deps << 'EOF'
-# TEMPORARY: Break harfbuzz/freetype circular dependency for initial bootstrap
+# TEMPORARY: Break circular dependencies for initial bootstrap
+# This file is removed after @world update, then packages are rebuilt with full flags
+#
+# harfbuzz/freetype cycle:
 # harfbuzz[+truetype] depends on freetype, freetype[harfbuzz] depends on harfbuzz
-# Since truetype is +default on harfbuzz, we disable it initially then rebuild
 media-libs/harfbuzz -truetype
+
+# webp/tiff cycle:
+# libwebp[tiff] depends on tiff, tiff[webp] depends on libwebp
+media-libs/tiff -webp
+
+# openimageio/opencolorio cycle (pulled by graphics apps):
+# openimageio[color-management] depends on opencolorio, opencolorio depends on openimageio
+media-libs/openimageio -color-management
 EOF
 
-    # NVIDIA driver requirements
+    # NVIDIA driver and libglvnd configuration
+    # libglvnd is the modern GL Vendor-Neutral Dispatch library (replaces eselect-opengl)
+    # It allows multiple GL implementations (mesa, nvidia) to coexist without conflicts
     cat > /mnt/gentoo/etc/portage/package.use/nvidia << 'EOF'
+# NVIDIA proprietary driver
 x11-drivers/nvidia-drivers modules
+
+# Disable nouveau in mesa (conflicts with proprietary driver)
 media-libs/mesa -video_cards_nouveau
+
+# libglvnd: GL Vendor-Neutral Dispatch (modern OpenGL dispatch)
+# X flag required for X11/XWayland compatibility
+# This is the modern approach - replaces old eselect-opengl symlink system
 media-libs/libglvnd X
 EOF
 
@@ -802,8 +821,19 @@ configure_portage() {
     log_info "Removing temporary circular dependency workarounds..."
     run_chroot "rm -f /etc/portage/package.use/zzz-circular-deps"
 
-    log_info "Rebuilding harfbuzz with truetype support..."
-    run_chroot "emerge --oneshot --usepkg=n media-libs/harfbuzz 2>/dev/null" || true
+    log_info "Rebuilding packages with full USE flags..."
+    # Rebuild in dependency order: libraries first, then dependents
+    # --usepkg=n forces source build to pick up new USE flags
+    # Using --changed-use to only rebuild if USE actually changed
+    run_chroot "emerge --oneshot --usepkg=n --changed-use \
+        media-libs/harfbuzz \
+        media-libs/tiff \
+        media-libs/libwebp \
+        2>/dev/null" || true
+
+    # openimageio may not be installed yet (pulled by desktop apps later)
+    # If it is installed, rebuild it too
+    run_chroot "emerge --oneshot --usepkg=n --changed-use media-libs/openimageio 2>/dev/null" || true
 
     log_success "Portage configured"
 }

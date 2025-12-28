@@ -183,6 +183,20 @@ configure_portage() {
         sed -i 's/-X /X /g; s/-X"/X"/g' /etc/portage/make.conf
     fi
 
+    # Temporary circular dependency workarounds for desktop packages
+    # These are removed after the initial update
+    log_info "Adding temporary circular dependency workarounds..."
+    cat > /etc/portage/package.use/zzz-desktop-circular-deps << 'EOF'
+# TEMPORARY: Break circular dependencies for desktop install
+# This file is removed after @world update
+
+# openimageio/opencolorio cycle (common in graphics stacks)
+media-libs/openimageio -color-management
+
+# If qt6 pulls in circular deps with multimedia
+dev-qt/qtmultimedia -qml
+EOF
+
     # Hyprland keywords (often needs ~amd64)
     log_info "Adding Hyprland package keywords..."
     cat > /etc/portage/package.accept_keywords/hyprland << 'EOF'
@@ -201,6 +215,15 @@ EOF
     # Update world with new USE flags
     log_info "Updating system with new USE flags (this may take a while)..."
     emerge --update --deep --newuse @world --quiet-build || log_warn "World update had issues, continuing..."
+
+    # Remove temporary workarounds and rebuild affected packages
+    log_info "Removing temporary circular dependency workarounds..."
+    rm -f /etc/portage/package.use/zzz-desktop-circular-deps
+
+    log_info "Rebuilding packages with full USE flags..."
+    emerge --oneshot --usepkg=n --changed-use \
+        media-libs/openimageio \
+        2>/dev/null || true
 
     log_success "Portage configured for Wayland"
 }

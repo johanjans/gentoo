@@ -259,6 +259,61 @@ Applied by desktop-install.sh:
 - JetBrainsMono Nerd Font downloaded directly from GitHub releases
 - Installed to `/usr/share/fonts/nerd-fonts/`
 
+## Circular Dependency Handling
+
+The scripts handle known Gentoo circular dependencies during bootstrap. These are
+managed via temporary `/etc/portage/package.use/zzz-*` files that are removed after
+the initial `@world` update, followed by a rebuild of affected packages with full flags.
+
+### Base System (gentoo-install.sh)
+
+Handled in `/etc/portage/package.use/zzz-circular-deps`:
+
+| Cycle | Packages | Solution |
+|-------|----------|----------|
+| harfbuzz/freetype | media-libs/harfbuzz ↔ media-libs/freetype | Disable `truetype` on harfbuzz initially |
+| webp/tiff | media-libs/libwebp ↔ media-libs/tiff | Disable `webp` on tiff initially |
+| openimageio/opencolorio | media-libs/openimageio ↔ media-libs/opencolorio | Disable `color-management` on openimageio initially |
+
+After `@world` update, these packages are rebuilt with:
+```bash
+emerge --oneshot --usepkg=n --changed-use \
+    media-libs/harfbuzz \
+    media-libs/tiff \
+    media-libs/libwebp
+```
+
+### Desktop Environment (desktop-install.sh)
+
+Handled in `/etc/portage/package.use/zzz-desktop-circular-deps`:
+
+| Cycle | Solution |
+|-------|----------|
+| openimageio/opencolorio | Disable `color-management` on openimageio |
+| qt6 multimedia | Disable `qml` on qtmultimedia if needed |
+
+### libglvnd (Modern OpenGL Dispatch)
+
+The scripts use `libglvnd` (GL Vendor-Neutral Dispatch) which is the modern replacement
+for `eselect-opengl`. This allows Mesa and NVIDIA drivers to coexist without symlink conflicts.
+
+Configuration in `/etc/portage/package.use/nvidia`:
+```bash
+media-libs/libglvnd X
+media-libs/mesa -video_cards_nouveau
+```
+
+### Manual Resolution
+
+If you encounter additional circular dependencies, the general pattern is:
+1. Identify the USE flag causing the cycle (check emerge error message)
+2. Add temporary disable to `package.use`: `pkg/name -problematic_flag`
+3. Run `emerge --update @world`
+4. Remove the temporary override
+5. Rebuild affected packages: `emerge --oneshot --changed-use pkg1 pkg2`
+
+Reference: [Gentoo Wiki - Circular Dependencies](https://wiki.gentoo.org/wiki/Portage/Help/Circular_dependencies)
+
 ## Hyprland Keybindings
 
 | Shortcut | Action |
