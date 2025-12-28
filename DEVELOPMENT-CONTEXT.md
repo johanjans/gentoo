@@ -274,13 +274,15 @@ Handled in `/etc/portage/package.use/zzz-circular-deps`:
 | harfbuzz/freetype | media-libs/harfbuzz ↔ media-libs/freetype | Disable `truetype` on harfbuzz initially |
 | webp/tiff | media-libs/libwebp ↔ media-libs/tiff | Disable `webp` on tiff initially |
 | openimageio/opencolorio | media-libs/openimageio ↔ media-libs/opencolorio | Disable `color-management` on openimageio initially |
+| pillow/freetype | dev-python/pillow ↔ media-libs/freetype | Disable `truetype` on pillow initially |
 
 After `@world` update, these packages are rebuilt with:
 ```bash
 emerge --oneshot --usepkg=n --changed-use \
     media-libs/harfbuzz \
     media-libs/tiff \
-    media-libs/libwebp
+    media-libs/libwebp \
+    dev-python/pillow
 ```
 
 ### Desktop Environment (desktop-install.sh)

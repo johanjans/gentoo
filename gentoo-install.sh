@@ -727,6 +727,10 @@ media-libs/tiff -webp
 # openimageio/opencolorio cycle (pulled by graphics apps):
 # openimageio[color-management] depends on opencolorio, opencolorio depends on openimageio
 media-libs/openimageio -color-management
+
+# pillow/freetype cycle:
+# pillow[truetype] depends on freetype, freetype pulls in packages that depend on pillow
+dev-python/pillow -truetype
 EOF
 
     # NVIDIA driver and libglvnd configuration
@@ -829,6 +833,7 @@ configure_portage() {
         media-libs/harfbuzz \
         media-libs/tiff \
         media-libs/libwebp \
+        dev-python/pillow \
         2>/dev/null" || true
 
     # openimageio may not be installed yet (pulled by desktop apps later)
