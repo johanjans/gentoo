@@ -218,14 +218,19 @@ chr "eselect repository enable guru"
 chr "emerge --sync guru"
 
 # Break freetype <-> harfbuzz circular dependency before @world
+# Use --nodeps to force build order regardless of portage's dependency resolver
 echo "Resolving freetype/harfbuzz circular dependency..."
-chr "USE='-harfbuzz' emerge --verbose --oneshot media-libs/freetype"
-chr "emerge --verbose --oneshot media-libs/harfbuzz"
+chr "USE='-harfbuzz' emerge --verbose --oneshot --nodeps media-libs/freetype"
+chr "emerge --verbose --oneshot --nodeps media-libs/harfbuzz"
 chr "emerge --verbose --oneshot media-libs/freetype"
 chr "rm -f /etc/portage/package.use/zzz-bootstrap"
 
 echo "Updating @world (this takes a while)..."
-chr "emerge --verbose --update --deep --newuse @world"
+chr "emerge --verbose --update --deep --newuse --backtrack=100 --complete-graph @world"
+
+# Rebuild freetype/harfbuzz with proper linking after @world
+echo "Final rebuild of freetype/harfbuzz..."
+chr "emerge --verbose --oneshot media-libs/freetype media-libs/harfbuzz"
 
 ###############################################################################
 # LOCALE & TIMEZONE
