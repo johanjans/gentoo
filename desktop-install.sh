@@ -162,21 +162,22 @@ preflight_checks() {
 configure_portage() {
     log_step "Configuring Portage for Wayland"
 
-    # Add Wayland USE flags
-    log_info "Adding Wayland USE flags..."
+    # Add graphics and Wayland USE flags (deferred from base install for reliability)
+    log_info "Adding graphics and Wayland USE flags..."
 
-    # Check if wayland is already in USE
-    if ! grep -q "wayland" /etc/portage/make.conf; then
-        # Add Wayland-specific USE flags (handle both 'USE="' and 'USE = "' formats)
-        if grep -qE '^USE\s*=' /etc/portage/make.conf; then
-            sed -i -E 's/^(USE\s*=\s*")/\1wayland /' /etc/portage/make.conf
-        else
-            # USE not found at start of line, append to file
-            echo 'USE="${USE} wayland"' >> /etc/portage/make.conf
+    # Graphics flags: vulkan, nvenc, vaapi for NVIDIA hardware acceleration
+    # These were deferred from gentoo-install.sh to avoid circular deps during bootstrap
+    local graphics_flags="wayland vulkan nvenc vaapi X"
+
+    for flag in $graphics_flags; do
+        if ! grep -q "$flag" /etc/portage/make.conf; then
+            if grep -qE '^USE\s*=' /etc/portage/make.conf; then
+                sed -i -E "s/^(USE\s*=\s*\")/\1${flag} /" /etc/portage/make.conf
+            fi
         fi
-    fi
+    done
 
-    # Ensure X is enabled (needed for xwayland)
+    # Remove -X flag if present (XWayland needs X support)
     if grep -q -- '-X' /etc/portage/make.conf; then
         log_info "Removing -X USE flag (XWayland needs X support)..."
         sed -i 's/-X /X /g; s/-X"/X"/g' /etc/portage/make.conf

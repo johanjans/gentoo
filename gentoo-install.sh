@@ -713,17 +713,17 @@ configure_makeconf() {
 
     # Temporary flags to break circular dependencies (removed after @world update)
     cat > /mnt/gentoo/etc/portage/package.use/zzz-circular-deps << 'EOF'
-# TEMPORARY: Break circular dependencies for initial bootstrap
-# These are removed after @world and packages are rebuilt with full features
-media-libs/tiff -webp
-media-libs/libwebp -tiff
-dev-python/pillow -truetype
+# TEMPORARY: Break harfbuzz/freetype circular dependency for initial bootstrap
+# harfbuzz[+truetype] depends on freetype, freetype[harfbuzz] depends on harfbuzz
+# Since truetype is +default on harfbuzz, we disable it initially then rebuild
+media-libs/harfbuzz -truetype
 EOF
 
     # NVIDIA driver requirements
     cat > /mnt/gentoo/etc/portage/package.use/nvidia << 'EOF'
-x11-drivers/nvidia-drivers modules driver
+x11-drivers/nvidia-drivers modules
 media-libs/mesa -video_cards_nouveau
+media-libs/libglvnd X
 EOF
 
     log_success "make.conf configured"
@@ -802,10 +802,8 @@ configure_portage() {
     log_info "Removing temporary circular dependency workarounds..."
     run_chroot "rm -f /etc/portage/package.use/zzz-circular-deps"
 
-    log_info "Rebuilding packages with full features..."
-    # Only rebuild if packages are actually installed (they may not be yet)
-    run_chroot "emerge --oneshot --usepkg=n media-libs/tiff media-libs/libwebp 2>/dev/null" || true
-    run_chroot "emerge --oneshot --usepkg=n dev-python/pillow 2>/dev/null" || true
+    log_info "Rebuilding harfbuzz with truetype support..."
+    run_chroot "emerge --oneshot --usepkg=n media-libs/harfbuzz 2>/dev/null" || true
 
     log_success "Portage configured"
 }
