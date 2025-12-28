@@ -27,6 +27,10 @@ LOG_DIR="/var/log/gentoo-install"
 LOG_TIMESTAMP="$(date '+%Y-%m-%d_%H-%M')"
 LOG_FILE="${LOG_DIR}/desktop-install_${LOG_TIMESTAMP}.log"
 
+# State file for checkpoint/resume functionality
+STATE_FILE="${LOG_DIR}/desktop-install.state"
+CURRENT_STEP=""
+
 init_logging() {
     mkdir -p "$LOG_DIR"
     cat > "$LOG_FILE" << EOF
@@ -118,6 +122,194 @@ log_step() {
     echo -e "${CYAN} $1${NC}"
     echo -e "${CYAN}========================================${NC}\n"
     log_to_file "=== $1 ==="
+}
+
+#==============================================================================
+# CHECKPOINT/RESUME SYSTEM
+#==============================================================================
+
+# Installation steps in order
+INSTALL_STEPS=(
+    "preflight_checks"
+    "configure_portage"
+    "install_session"
+    "install_hyprland"
+    "install_fonts"
+    "install_configs"
+    "configure_autostart"
+)
+
+# Human-readable step descriptions
+declare -A STEP_DESCRIPTIONS=(
+    ["preflight_checks"]="Pre-flight checks (user, configs)"
+    ["configure_portage"]="Configure Portage for Wayland/graphics"
+    ["install_session"]="Install session/login packages"
+    ["install_hyprland"]="Install Hyprland and Wayland packages"
+    ["install_fonts"]="Install fonts (JetBrainsMono Nerd Font)"
+    ["install_configs"]="Install configuration files"
+    ["configure_autostart"]="Configure Hyprland auto-start"
+)
+
+# Save completed step to state file
+checkpoint_save() {
+    local step="$1"
+    mkdir -p "$LOG_DIR"
+    echo "$step" >> "$STATE_FILE"
+    log_to_file "[CHECKPOINT] Saved: $step"
+}
+
+# Check if step is already completed
+checkpoint_completed() {
+    local step="$1"
+    [[ -f "$STATE_FILE" ]] && grep -qx "$step" "$STATE_FILE"
+}
+
+# Get last completed step
+checkpoint_get_last() {
+    if [[ -f "$STATE_FILE" ]]; then
+        tail -1 "$STATE_FILE"
+    fi
+}
+
+# Clear all checkpoints
+checkpoint_clear() {
+    rm -f "$STATE_FILE"
+    log_to_file "[CHECKPOINT] Cleared all checkpoints"
+}
+
+# Get step index
+get_step_index() {
+    local step="$1"
+    for i in "${!INSTALL_STEPS[@]}"; do
+        if [[ "${INSTALL_STEPS[$i]}" == "$step" ]]; then
+            echo "$i"
+            return 0
+        fi
+    done
+    echo "-1"
+}
+
+# List all steps with status
+list_steps() {
+    echo ""
+    echo "Desktop Installation Steps:"
+    echo "============================"
+    local last_completed=$(checkpoint_get_last)
+    local last_index=-1
+    if [[ -n "$last_completed" ]]; then
+        last_index=$(get_step_index "$last_completed")
+    fi
+
+    for i in "${!INSTALL_STEPS[@]}"; do
+        local step="${INSTALL_STEPS[$i]}"
+        local desc="${STEP_DESCRIPTIONS[$step]}"
+        local status=""
+
+        if checkpoint_completed "$step"; then
+            status="${GREEN}[DONE]${NC}"
+        elif [[ $i -eq $((last_index + 1)) ]]; then
+            status="${YELLOW}[NEXT]${NC}"
+        else
+            status="[    ]"
+        fi
+
+        printf "  %d. %-20s %b %s\n" "$((i+1))" "$step" "$status" "$desc"
+    done
+    echo ""
+}
+
+# Show failure message with resume instructions
+show_failure_message() {
+    local failed_step="$1"
+    local exit_code="$2"
+    local error_output="$3"
+
+    echo ""
+    echo -e "${RED}╔══════════════════════════════════════════════════════════════════════════════╗${NC}"
+    echo -e "${RED}║                     DESKTOP INSTALLATION FAILED                              ║${NC}"
+    echo -e "${RED}╚══════════════════════════════════════════════════════════════════════════════╝${NC}"
+    echo ""
+    echo -e "${RED}Failed Step:${NC}  $failed_step"
+    echo -e "${RED}Description:${NC}  ${STEP_DESCRIPTIONS[$failed_step]}"
+    echo -e "${RED}Exit Code:${NC}    $exit_code"
+    echo ""
+
+    if [[ -n "$error_output" ]]; then
+        echo -e "${RED}Last Output:${NC}"
+        echo "─────────────────────────────────────────────────────────────────────"
+        echo "$error_output" | tail -20
+        echo "─────────────────────────────────────────────────────────────────────"
+        echo ""
+    fi
+
+    echo -e "${YELLOW}Log File:${NC}     $LOG_FILE"
+    echo ""
+    echo -e "${CYAN}To investigate:${NC}"
+    echo "  1. Check the log file:  less $LOG_FILE"
+    echo "  2. Check emerge logs:   less /var/tmp/portage/*/*/temp/build.log"
+    echo ""
+    echo -e "${CYAN}To resume after fixing the issue:${NC}"
+    echo ""
+    echo "  # Resume from the failed step:"
+    echo -e "  ${GREEN}doas ./desktop-install.sh --resume${NC}"
+    echo ""
+    echo "  # Or restart from a specific step:"
+    echo -e "  ${GREEN}doas ./desktop-install.sh --start-from=$failed_step${NC}"
+    echo ""
+    echo "  # List all steps and their status:"
+    echo -e "  ${GREEN}./desktop-install.sh --list-steps${NC}"
+    echo ""
+    echo "  # Start fresh (clear all checkpoints):"
+    echo -e "  ${GREEN}doas ./desktop-install.sh --fresh${NC}"
+    echo ""
+
+    log_to_file "=== INSTALLATION FAILED at $failed_step ==="
+}
+
+# Error trap handler
+handle_error() {
+    local exit_code=$?
+    local line_number=$1
+
+    local error_output=""
+    if [[ -f "$LOG_FILE" ]]; then
+        error_output=$(tail -30 "$LOG_FILE" 2>/dev/null || true)
+    fi
+
+    show_failure_message "$CURRENT_STEP" "$exit_code" "$error_output"
+    exit $exit_code
+}
+
+# Run a step with checkpoint tracking
+run_step() {
+    local step="$1"
+    CURRENT_STEP="$step"
+
+    "$step"
+
+    checkpoint_save "$step"
+}
+
+# Show usage
+show_usage() {
+    echo ""
+    echo "Gentoo Desktop Installation Script - Checkpoint/Resume System"
+    echo ""
+    echo "Usage: doas $0 [OPTIONS]"
+    echo ""
+    echo "Options:"
+    echo "  --resume              Resume from last completed checkpoint"
+    echo "  --start-from=STEP    Start from specific step (skips previous steps)"
+    echo "  --list-steps         List all steps and their completion status"
+    echo "  --fresh              Clear checkpoints and start fresh"
+    echo "  --help               Show this help message"
+    echo ""
+    echo "Examples:"
+    echo "  doas $0                    Start new installation"
+    echo "  doas $0 --resume           Resume from where it left off"
+    echo "  doas $0 --start-from=install_hyprland"
+    echo "  $0 --list-steps"
+    echo ""
 }
 
 #==============================================================================
@@ -374,42 +566,140 @@ EOF
 #==============================================================================
 
 main() {
-    # Initialize logging first
+    local resume_mode=false
+    local start_from=""
+    local fresh_install=false
+
+    # Parse command-line arguments
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            --help|-h)
+                show_usage
+                exit 0
+                ;;
+            --list-steps)
+                list_steps
+                exit 0
+                ;;
+            --resume)
+                resume_mode=true
+                shift
+                ;;
+            --start-from=*)
+                start_from="${1#*=}"
+                shift
+                ;;
+            --fresh)
+                fresh_install=true
+                shift
+                ;;
+            *)
+                echo "Unknown option: $1"
+                show_usage
+                exit 1
+                ;;
+        esac
+    done
+
+    # Initialize logging
     init_logging
 
-    clear
-    echo -e "${CYAN}"
-    echo "╔══════════════════════════════════════════════════════════════╗"
-    echo "║       Gentoo Desktop Environment Installation Script         ║"
-    echo "║                                                              ║"
-    echo "║  Installs: Hyprland + Wayland + Catppuccin Mocha theming    ║"
-    echo "╚══════════════════════════════════════════════════════════════╝"
-    echo -e "${NC}"
-    echo ""
-    echo "This script will install:"
-    echo "  - Hyprland (Wayland compositor)"
-    echo "  - Kitty (terminal)"
-    echo "  - Waybar (status bar)"
-    echo "  - Wofi (application launcher)"
-    echo "  - Mako (notifications)"
-    echo "  - JetBrainsMono Nerd Font"
-    echo "  - Catppuccin Mocha theming for all apps"
-    echo ""
-    echo "Note: Neovim, btop, GRUB theme, pipewire, bluez"
-    echo "      already installed by gentoo-install.sh"
-    echo ""
-    echo -e "${BLUE}Log file: ${LOG_FILE}${NC}"
-    echo ""
+    # Handle fresh install request
+    if [[ "$fresh_install" == true ]]; then
+        checkpoint_clear
+        echo -e "${YELLOW}Cleared all checkpoints. Starting fresh installation.${NC}"
+    fi
 
-    read -p "Press Enter to continue or Ctrl+C to abort..."
+    # Set up error trap
+    trap 'handle_error $LINENO' ERR
 
-    preflight_checks
-    configure_portage
-    install_session
-    install_hyprland
-    install_fonts
-    install_configs
-    configure_autostart
+    # Determine starting point
+    local start_index=0
+    local last_completed=$(checkpoint_get_last)
+
+    if [[ -n "$start_from" ]]; then
+        start_index=$(get_step_index "$start_from")
+        if [[ "$start_index" == "-1" ]]; then
+            echo -e "${RED}Error: Unknown step '$start_from'${NC}"
+            echo "Valid steps:"
+            for step in "${INSTALL_STEPS[@]}"; do
+                echo "  - $step"
+            done
+            exit 1
+        fi
+        echo -e "${CYAN}Starting from step: $start_from${NC}"
+    elif [[ "$resume_mode" == true ]] || [[ -n "$last_completed" ]]; then
+        if [[ -n "$last_completed" ]]; then
+            local last_index=$(get_step_index "$last_completed")
+            start_index=$((last_index + 1))
+
+            if [[ $start_index -ge ${#INSTALL_STEPS[@]} ]]; then
+                echo -e "${GREEN}All steps already completed!${NC}"
+                echo "Use --fresh to start a new installation."
+                exit 0
+            fi
+
+            echo -e "${CYAN}Resuming from: ${INSTALL_STEPS[$start_index]}${NC}"
+            echo -e "${CYAN}Last completed: $last_completed${NC}"
+            echo ""
+
+            list_steps
+
+            read -p "Press Enter to resume or Ctrl+C to abort..."
+        fi
+    fi
+
+    # Show banner for fresh installs
+    if [[ $start_index -eq 0 ]]; then
+        clear
+        echo -e "${CYAN}"
+        echo "╔══════════════════════════════════════════════════════════════╗"
+        echo "║       Gentoo Desktop Environment Installation Script         ║"
+        echo "║                                                              ║"
+        echo "║  Installs: Hyprland + Wayland + Catppuccin Mocha theming    ║"
+        echo "╚══════════════════════════════════════════════════════════════╝"
+        echo -e "${NC}"
+        echo ""
+        echo "This script will install:"
+        echo "  - Hyprland (Wayland compositor)"
+        echo "  - Kitty (terminal)"
+        echo "  - Waybar (status bar)"
+        echo "  - Wofi (application launcher)"
+        echo "  - Mako (notifications)"
+        echo "  - JetBrainsMono Nerd Font"
+        echo "  - Catppuccin Mocha theming for all apps"
+        echo ""
+        echo "Note: Neovim, btop, GRUB theme, pipewire, bluez"
+        echo "      already installed by gentoo-install.sh"
+        echo ""
+        echo -e "${YELLOW}Checkpoint system enabled:${NC} If installation fails, you can resume"
+        echo "                           with: doas ./desktop-install.sh --resume"
+        echo ""
+        echo -e "${BLUE}Log file: ${LOG_FILE}${NC}"
+        echo ""
+
+        read -p "Press Enter to continue or Ctrl+C to abort..."
+    fi
+
+    # Run installation steps from start_index
+    for ((i=start_index; i<${#INSTALL_STEPS[@]}; i++)); do
+        local step="${INSTALL_STEPS[$i]}"
+        local step_num=$((i + 1))
+        local total_steps=${#INSTALL_STEPS[@]}
+
+        echo ""
+        echo -e "${MAUVE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+        echo -e "${MAUVE}  Step $step_num/$total_steps: ${STEP_DESCRIPTIONS[$step]}${NC}"
+        echo -e "${MAUVE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+
+        run_step "$step"
+    done
+
+    # Clear error trap
+    trap - ERR
+
+    # Installation complete - clear checkpoints
+    checkpoint_clear
 
     echo ""
     echo -e "${GREEN}"

@@ -36,6 +36,10 @@ LOG_DIR="/var/log/gentoo-install"
 LOG_TIMESTAMP="$(date '+%Y-%m-%d_%H-%M')"
 LOG_FILE="${LOG_DIR}/gentoo-install_${LOG_TIMESTAMP}.log"
 
+# State file for checkpoint/resume functionality
+STATE_FILE="${LOG_DIR}/gentoo-install.state"
+CURRENT_STEP=""
+
 # Initialize logging
 init_logging() {
     mkdir -p "$LOG_DIR"
@@ -222,6 +226,225 @@ finalize_log() {
     echo "================================================================================" >> "$LOG_FILE"
     echo "END OF LOG - $status" >> "$LOG_FILE"
     echo "================================================================================" >> "$LOG_FILE"
+}
+
+#==============================================================================
+# CHECKPOINT/RESUME SYSTEM
+#==============================================================================
+
+# Installation steps in order (must match function names without arguments)
+INSTALL_STEPS=(
+    "preflight_checks"
+    "select_disk"
+    "partition_disk"
+    "create_filesystems"
+    "mount_filesystems"
+    "install_stage3"
+    "configure_makeconf"
+    "setup_chroot"
+    "configure_portage"
+    "configure_locale"
+    "configure_fstab"
+    "configure_system"
+    "install_kernel"
+    "install_nvidia"
+    "install_tools"
+    "install_base_packages"
+    "install_bootloader"
+    "create_user"
+    "install_user_configs"
+    "finalize"
+)
+
+# Human-readable step descriptions
+declare -A STEP_DESCRIPTIONS=(
+    ["preflight_checks"]="Pre-flight checks (network, time sync)"
+    ["select_disk"]="Select target disk"
+    ["partition_disk"]="Partition disk (GPT, EFI, swap, root)"
+    ["create_filesystems"]="Create filesystems (FAT32, swap, Btrfs)"
+    ["mount_filesystems"]="Mount filesystems and create subvolumes"
+    ["install_stage3"]="Download and extract stage3 tarball"
+    ["configure_makeconf"]="Configure make.conf and Portage USE flags"
+    ["setup_chroot"]="Set up chroot environment"
+    ["configure_portage"]="Sync Portage tree and update @world"
+    ["configure_locale"]="Configure timezone and locale"
+    ["configure_fstab"]="Generate fstab"
+    ["configure_system"]="Configure hostname, hosts, keymap"
+    ["install_kernel"]="Compile and install kernel"
+    ["install_nvidia"]="Install NVIDIA proprietary driver"
+    ["install_tools"]="Install system tools (NetworkManager, etc.)"
+    ["install_base_packages"]="Install base packages"
+    ["install_bootloader"]="Install and configure GRUB bootloader"
+    ["create_user"]="Create user account"
+    ["install_user_configs"]="Install user configuration files"
+    ["finalize"]="Final cleanup and configuration"
+)
+
+# Save completed step to state file
+checkpoint_save() {
+    local step="$1"
+    mkdir -p "$LOG_DIR"
+    echo "$step" >> "$STATE_FILE"
+    log_msg "CHECKPOINT" "Saved checkpoint: $step"
+}
+
+# Check if step is already completed
+checkpoint_completed() {
+    local step="$1"
+    [[ -f "$STATE_FILE" ]] && grep -qx "$step" "$STATE_FILE"
+}
+
+# Get last completed step
+checkpoint_get_last() {
+    if [[ -f "$STATE_FILE" ]]; then
+        tail -1 "$STATE_FILE"
+    fi
+}
+
+# Clear all checkpoints (for fresh install)
+checkpoint_clear() {
+    rm -f "$STATE_FILE"
+    log_msg "CHECKPOINT" "Cleared all checkpoints"
+}
+
+# Get step index in INSTALL_STEPS array
+get_step_index() {
+    local step="$1"
+    for i in "${!INSTALL_STEPS[@]}"; do
+        if [[ "${INSTALL_STEPS[$i]}" == "$step" ]]; then
+            echo "$i"
+            return 0
+        fi
+    done
+    echo "-1"
+}
+
+# List all steps with their status
+list_steps() {
+    echo ""
+    echo "Installation Steps:"
+    echo "==================="
+    local last_completed=$(checkpoint_get_last)
+    local last_index=-1
+    if [[ -n "$last_completed" ]]; then
+        last_index=$(get_step_index "$last_completed")
+    fi
+
+    for i in "${!INSTALL_STEPS[@]}"; do
+        local step="${INSTALL_STEPS[$i]}"
+        local desc="${STEP_DESCRIPTIONS[$step]}"
+        local status=""
+
+        if checkpoint_completed "$step"; then
+            status="${GREEN}[DONE]${NC}"
+        elif [[ $i -eq $((last_index + 1)) ]]; then
+            status="${YELLOW}[NEXT]${NC}"
+        else
+            status="[    ]"
+        fi
+
+        printf "  %2d. %-24s %b %s\n" "$((i+1))" "$step" "$status" "$desc"
+    done
+    echo ""
+}
+
+# Show failure message with resume instructions
+show_failure_message() {
+    local failed_step="$1"
+    local exit_code="$2"
+    local error_output="$3"
+
+    echo ""
+    echo -e "${RED}╔══════════════════════════════════════════════════════════════════════════════╗${NC}"
+    echo -e "${RED}║                          INSTALLATION FAILED                                 ║${NC}"
+    echo -e "${RED}╚══════════════════════════════════════════════════════════════════════════════╝${NC}"
+    echo ""
+    echo -e "${RED}Failed Step:${NC}  $failed_step"
+    echo -e "${RED}Description:${NC}  ${STEP_DESCRIPTIONS[$failed_step]}"
+    echo -e "${RED}Exit Code:${NC}    $exit_code"
+    echo ""
+
+    if [[ -n "$error_output" ]]; then
+        echo -e "${RED}Last Output:${NC}"
+        echo "─────────────────────────────────────────────────────────────────────"
+        echo "$error_output" | tail -20
+        echo "─────────────────────────────────────────────────────────────────────"
+        echo ""
+    fi
+
+    echo -e "${YELLOW}Log File:${NC}     $LOG_FILE"
+    echo ""
+    echo -e "${CYAN}To investigate:${NC}"
+    echo "  1. Check the log file:  less $LOG_FILE"
+    echo "  2. Check emerge logs:   less /var/tmp/portage/*/*/temp/build.log"
+    echo "  3. If in chroot issue:  arch-chroot /mnt/gentoo"
+    echo ""
+    echo -e "${CYAN}To resume after fixing the issue:${NC}"
+    echo ""
+    echo "  # Resume from the failed step:"
+    echo -e "  ${GREEN}./gentoo-install.sh --resume${NC}"
+    echo ""
+    echo "  # Or restart from a specific step:"
+    echo -e "  ${GREEN}./gentoo-install.sh --start-from=$failed_step${NC}"
+    echo ""
+    echo "  # List all steps and their status:"
+    echo -e "  ${GREEN}./gentoo-install.sh --list-steps${NC}"
+    echo ""
+    echo "  # Start fresh (clear all checkpoints):"
+    echo -e "  ${GREEN}./gentoo-install.sh --fresh${NC}"
+    echo ""
+
+    # Log failure details
+    finalize_log "FAILED at $failed_step"
+}
+
+# Error trap handler
+handle_error() {
+    local exit_code=$?
+    local line_number=$1
+
+    # Capture recent output if available
+    local error_output=""
+    if [[ -f "$LOG_FILE" ]]; then
+        error_output=$(tail -30 "$LOG_FILE" 2>/dev/null || true)
+    fi
+
+    show_failure_message "$CURRENT_STEP" "$exit_code" "$error_output"
+    exit $exit_code
+}
+
+# Run a step with checkpoint tracking
+run_step() {
+    local step="$1"
+    CURRENT_STEP="$step"
+
+    # Execute the step function
+    "$step"
+
+    # Save checkpoint on success
+    checkpoint_save "$step"
+}
+
+# Show usage/help
+show_usage() {
+    echo ""
+    echo "Gentoo Installation Script - Checkpoint/Resume System"
+    echo ""
+    echo "Usage: $0 [OPTIONS]"
+    echo ""
+    echo "Options:"
+    echo "  --resume              Resume from last completed checkpoint"
+    echo "  --start-from=STEP    Start from specific step (skips previous steps)"
+    echo "  --list-steps         List all steps and their completion status"
+    echo "  --fresh              Clear checkpoints and start fresh installation"
+    echo "  --help               Show this help message"
+    echo ""
+    echo "Examples:"
+    echo "  $0                    Start new installation (or resume if state exists)"
+    echo "  $0 --resume           Resume from where it left off"
+    echo "  $0 --start-from=install_kernel"
+    echo "  $0 --list-steps"
+    echo ""
 }
 
 #==============================================================================
@@ -738,7 +961,8 @@ EOF
     # It allows multiple GL implementations (mesa, nvidia) to coexist without conflicts
     cat > /mnt/gentoo/etc/portage/package.use/nvidia << 'EOF'
 # NVIDIA proprietary driver
-x11-drivers/nvidia-drivers modules
+# -tools: avoids masked dependency, nvidia-settings is X11-only anyway (useless on Wayland)
+x11-drivers/nvidia-drivers modules -tools
 
 # Disable nouveau in mesa (conflicts with proprietary driver)
 media-libs/mesa -video_cards_nouveau
@@ -837,8 +1061,8 @@ configure_portage() {
         2>/dev/null" || true
 
     # openimageio may not be installed yet (pulled by desktop apps later)
-    # If it is installed, rebuild it too
-    run_chroot "emerge --oneshot --usepkg=n --changed-use media-libs/openimageio 2>/dev/null" || true
+    # Only rebuild if already installed
+    run_chroot "[[ -d /var/db/pkg/media-libs/openimageio-* ]] && emerge --oneshot --usepkg=n --changed-use media-libs/openimageio || true"
 
     log_success "Portage configured"
 }
@@ -1244,58 +1468,146 @@ cleanup() {
 #==============================================================================
 
 main() {
-    # Initialize logging first
+    local resume_mode=false
+    local start_from=""
+    local fresh_install=false
+
+    # Parse command-line arguments
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            --help|-h)
+                show_usage
+                exit 0
+                ;;
+            --list-steps)
+                # Need colors for list_steps
+                list_steps
+                exit 0
+                ;;
+            --resume)
+                resume_mode=true
+                shift
+                ;;
+            --start-from=*)
+                start_from="${1#*=}"
+                shift
+                ;;
+            --fresh)
+                fresh_install=true
+                shift
+                ;;
+            *)
+                echo "Unknown option: $1"
+                show_usage
+                exit 1
+                ;;
+        esac
+    done
+
+    # Initialize logging
     init_logging
 
-    clear
-    echo -e "${CYAN}"
-    echo "╔══════════════════════════════════════════════════════════════╗"
-    echo "║         Gentoo Linux Base System Installation Script         ║"
-    echo "║                                                              ║"
-    echo "║  Target: HP ZBook Power 15.6 G9                              ║"
-    echo "║  Config: UEFI + Btrfs + OpenRC + NVIDIA (console only)       ║"
-    echo "╚══════════════════════════════════════════════════════════════╝"
-    echo -e "${NC}"
-    echo ""
-    echo "This script will:"
-    echo "  1. Help you select the correct NVMe drive"
-    echo "  2. Partition and format with Btrfs subvolumes"
-    echo "  3. Install Gentoo with OpenRC"
-    echo "  4. Install NVIDIA proprietary drivers"
-    echo "  5. Create user account: ${USERNAME}"
-    echo ""
-    echo "Note: This installs a console-only base system."
-    echo "      Run desktop-install.sh after first boot for Hyprland/Wayland."
-    echo ""
-    echo -e "${BLUE}Log file: ${LOG_FILE}${NC}"
-    echo ""
+    # Handle fresh install request
+    if [[ "$fresh_install" == true ]]; then
+        checkpoint_clear
+        echo -e "${YELLOW}Cleared all checkpoints. Starting fresh installation.${NC}"
+    fi
 
-    read -p "Press Enter to continue or Ctrl+C to abort..."
+    # Set up error trap for detailed failure reporting
+    trap 'handle_error $LINENO' ERR
 
-    # Log configuration after user confirms
-    log_config
+    # Determine starting point
+    local start_index=0
+    local last_completed=$(checkpoint_get_last)
 
-    # Run installation steps
-    preflight_checks
-    select_disk
-    partition_disk
-    create_filesystems
-    mount_filesystems
-    install_stage3
-    configure_makeconf
-    setup_chroot
-    configure_portage
-    configure_locale
-    configure_fstab
-    configure_system
-    install_kernel
-    install_nvidia
-    install_tools
-    install_base_packages
-    install_bootloader
-    create_user
-    install_user_configs
-    finalize
+    if [[ -n "$start_from" ]]; then
+        # User specified a starting point
+        start_index=$(get_step_index "$start_from")
+        if [[ "$start_index" == "-1" ]]; then
+            echo -e "${RED}Error: Unknown step '$start_from'${NC}"
+            echo "Valid steps:"
+            for step in "${INSTALL_STEPS[@]}"; do
+                echo "  - $step"
+            done
+            exit 1
+        fi
+        echo -e "${CYAN}Starting from step: $start_from${NC}"
+    elif [[ "$resume_mode" == true ]] || [[ -n "$last_completed" ]]; then
+        # Resume mode or existing state found
+        if [[ -n "$last_completed" ]]; then
+            local last_index=$(get_step_index "$last_completed")
+            start_index=$((last_index + 1))
+
+            if [[ $start_index -ge ${#INSTALL_STEPS[@]} ]]; then
+                echo -e "${GREEN}All steps already completed!${NC}"
+                echo "Use --fresh to start a new installation."
+                exit 0
+            fi
+
+            echo -e "${CYAN}Resuming from: ${INSTALL_STEPS[$start_index]}${NC}"
+            echo -e "${CYAN}Last completed: $last_completed${NC}"
+            echo ""
+
+            # Show step status
+            list_steps
+
+            read -p "Press Enter to resume or Ctrl+C to abort..."
+        fi
+    fi
+
+    # Show banner for fresh installs starting from beginning
+    if [[ $start_index -eq 0 ]]; then
+        clear
+        echo -e "${CYAN}"
+        echo "╔══════════════════════════════════════════════════════════════╗"
+        echo "║         Gentoo Linux Base System Installation Script         ║"
+        echo "║                                                              ║"
+        echo "║  Target: HP ZBook Power 15.6 G9                              ║"
+        echo "║  Config: UEFI + Btrfs + OpenRC + NVIDIA (console only)       ║"
+        echo "╚══════════════════════════════════════════════════════════════╝"
+        echo -e "${NC}"
+        echo ""
+        echo "This script will:"
+        echo "  1. Help you select the correct NVMe drive"
+        echo "  2. Partition and format with Btrfs subvolumes"
+        echo "  3. Install Gentoo with OpenRC"
+        echo "  4. Install NVIDIA proprietary drivers"
+        echo "  5. Create user account: ${USERNAME}"
+        echo ""
+        echo "Note: This installs a console-only base system."
+        echo "      Run desktop-install.sh after first boot for Hyprland/Wayland."
+        echo ""
+        echo -e "${YELLOW}Checkpoint system enabled:${NC} If installation fails, you can resume"
+        echo "                           with: ./gentoo-install.sh --resume"
+        echo ""
+        echo -e "${BLUE}Log file: ${LOG_FILE}${NC}"
+        echo ""
+
+        read -p "Press Enter to continue or Ctrl+C to abort..."
+
+        # Log configuration after user confirms
+        log_config
+    fi
+
+    # Run installation steps from start_index
+    for ((i=start_index; i<${#INSTALL_STEPS[@]}; i++)); do
+        local step="${INSTALL_STEPS[$i]}"
+        local step_num=$((i + 1))
+        local total_steps=${#INSTALL_STEPS[@]}
+
+        echo ""
+        echo -e "${MAUVE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+        echo -e "${MAUVE}  Step $step_num/$total_steps: ${STEP_DESCRIPTIONS[$step]}${NC}"
+        echo -e "${MAUVE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+
+        run_step "$step"
+    done
+
+    # Clear the error trap
+    trap - ERR
+
+    # Installation complete - clear checkpoints
+    checkpoint_clear
 
     echo ""
     echo -e "${GREEN}"
