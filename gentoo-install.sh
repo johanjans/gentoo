@@ -717,8 +717,8 @@ configure_makeconf() {
 # This file is removed after @world update, then packages are rebuilt with full flags
 #
 # harfbuzz/freetype cycle:
-# harfbuzz[+truetype] depends on freetype, freetype[harfbuzz] depends on harfbuzz
-media-libs/harfbuzz -truetype
+# Enable built-in TrueType shaper so harfbuzz doesn't need freetype for TrueType rendering
+media-libs/harfbuzz-12.1.0 truetype
 
 # webp/tiff cycle:
 # libwebp[tiff] depends on tiff, tiff[webp] depends on libwebp
