@@ -171,7 +171,8 @@ INPUT_DEVICES="libinput"
 # USE flags (Wayland/Hyprland ready)
 USE="bluetooth pipewire networkmanager elogind dbus \
      wayland gles2 opengl vulkan X screencast vaapi \
-     zstd -systemd -gnome -kde -doc -test"
+     zstd -systemd -gnome -kde -doc -test \
+     -tiff -webp -freetype -harfbuzz"
 
 # Bootloader
 GRUB_PLATFORMS="efi-64"
