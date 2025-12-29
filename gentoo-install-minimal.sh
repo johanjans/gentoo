@@ -218,8 +218,11 @@ chr "USE='-tiff' emerge --oneshot media-libs/libwebp"
 chr "emerge --oneshot media-libs/tiff"
 chr "emerge --oneshot media-libs/libwebp"
 
-# Resolve circular dependency (?)
+# Resolve circular dependency (ok)
 chr "USE='-truetype' emerge --oneshot dev-python/pillow"
+
+# Resolve circular dependency (?)
+chr "USE='dracut' emerge --oneshot sys-kernel/installkernel-60"
 
 # Emerge world, but break on errors...
 chr "emerge --verbose --update --deep --newuse --backtrack=1000 --complete-graph @world"
