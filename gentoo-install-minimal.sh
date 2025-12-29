@@ -171,8 +171,7 @@ INPUT_DEVICES="libinput"
 # USE flags (Wayland/Hyprland ready)
 USE="bluetooth pipewire networkmanager elogind dbus \
      wayland gles2 opengl vulkan X screencast vaapi \
-     zstd -systemd -gnome -kde -doc -test \
-     -tiff -webp -freetype -harfbuzz"
+     zstd -systemd -gnome -kde -doc -test"
 
 # Bootloader
 GRUB_PLATFORMS="efi-64"
@@ -210,6 +209,12 @@ chr "eselect profile set default/linux/amd64/23.0/desktop" || true
 chr "emerge --verbose app-eselect/eselect-repository"
 chr "eselect repository enable guru"
 chr "emerge --sync guru"
+
+# Resolve circular dependency between freetype and harfbuzz
+USE="-harfbuzz" emerge --oneshot media-libs/freetype
+
+# Resolve circular dependency between tiff and libwebp
+USE="-webp" emerge -1v media-libs/tiff
 
 echo "Updating @world (this takes a while)..."
 chr "emerge --verbose --update --deep --newuse --backtrack=1000 --complete-graph --keep-going @world"
