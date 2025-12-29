@@ -214,10 +214,12 @@ chr "emerge --sync guru"
 chr USE="-harfbuzz" emerge --oneshot media-libs/freetype
 
 # Resolve circular dependency between tiff and libwebp
-chr USE="-webp" emerge -1v media-libs/tiff
-chr USE="-tiff" emerge -1v media-libs/libwebp
+chr USE="-tiff" emerge --oneshot media-libs/libwebp
+chr emerge --oneshot media-libs/tiff
+chr emerge --oneshot media-libs/libwebp
 
-chr "emerge --verbose --update --deep --newuse --backtrack=1000 --complete-graph --keep-going @world"
+# Emerge world, but break on errors...
+chr "emerge --verbose --update --deep --newuse --backtrack=1000 --complete-graph @world"
 
 ###############################################################################
 # LOCALE & TIMEZONE
