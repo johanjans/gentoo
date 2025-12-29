@@ -29,6 +29,7 @@ echo "gui-libs/hyprlang ~amd64" >> /etc/portage/package.accept_keywords/hyprland
 echo "gui-libs/hyprcursor ~amd64" >> /etc/portage/package.accept_keywords/hyprland
 echo "gui-libs/aquamarine ~amd64" >> /etc/portage/package.accept_keywords/hyprland
 echo "dev-libs/hyprland-protocols ~amd64" >> /etc/portage/package.accept_keywords/hyprland
+echo "dev-cpp/sdbus-c++ ~amd64" >> /etc/portage/package.accept_keywords/hyprland
 
 # Unmask GURU specific packages
 echo "gui-apps/awww ~amd64" >> /etc/portage/package.accept_keywords/guru-packages
