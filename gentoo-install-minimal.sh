@@ -310,7 +310,6 @@ chr "emerge --verbose \
     app-admin/sysklogd \
     sys-process/cronie \
     net-misc/chrony \
-    app-backup/snapper \
     dev-vcs/git"
 
 # Add user to groups created by installed packages
@@ -341,20 +340,6 @@ permit persist :wheel
 EOF
 chmod 600 /mnt/gentoo/etc/doas.conf
 
-###############################################################################
-# SNAPPER (BTRFS SNAPSHOTS)
-###############################################################################
-
-echo "Configuring Snapper for Btrfs snapshots..."
-
-chr "snapper -c root create-config /"
-
-# Daily cleanup cron job
-cat > /mnt/gentoo/etc/cron.daily/snapper << 'EOF'
-#!/bin/sh
-snapper -c root cleanup number
-EOF
-chmod +x /mnt/gentoo/etc/cron.daily/snapper
 
 ###############################################################################
 # BOOTLOADER
@@ -397,14 +382,6 @@ User '${USERNAME}' created with password set.
 Root login has been disabled.
 
 Reboot into your new system.
-
---------------------------------------------------------------------------------
-SNAPSHOT COMMANDS
---------------------------------------------------------------------------------
-
-    snapper -c root list              # List snapshots
-    snapper -c root create -d "desc"  # Create snapshot before updates
-    snapper -c root undochange 1..0   # Revert last change
 
 ================================================================================
 EOF
