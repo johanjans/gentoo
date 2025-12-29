@@ -34,6 +34,7 @@ echo "dev-libs/hyprland-protocols ~amd64" >> /etc/portage/package.accept_keyword
 echo "gui-apps/awww ~amd64" >> /etc/portage/package.accept_keywords/guru-packages
 echo "gui-apps/hyprshot ~amd64" >> /etc/portage/package.accept_keywords/guru-packages
 echo "sys-auth/hyprpolkitagent ~amd64" >> /etc/portage/package.accept_keywords/guru-packages
+echo "app-misc/brightnessctl ~amd64" >> /etc/portage/package.accept_keywords/guru-packages
 
 # Install things
 emerge --ask --verbose \
