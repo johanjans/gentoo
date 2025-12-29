@@ -211,10 +211,10 @@ chr "eselect repository enable guru"
 chr "emerge --sync guru"
 
 # Resolve circular dependency between freetype and harfbuzz
-USE="-harfbuzz" emerge --oneshot media-libs/freetype
+chr USE="-harfbuzz" emerge --oneshot media-libs/freetype
 
 # Resolve circular dependency between tiff and libwebp
-USE="-webp" emerge -1v media-libs/tiff
+chr USE="-webp" emerge -1v media-libs/tiff
 
 echo "Updating @world (this takes a while)..."
 chr "emerge --verbose --update --deep --newuse --backtrack=1000 --complete-graph --keep-going @world"
