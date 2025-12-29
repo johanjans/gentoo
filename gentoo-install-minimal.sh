@@ -211,12 +211,12 @@ chr "eselect repository enable guru"
 chr "emerge --sync guru"
 
 # Resolve circular dependency between freetype and harfbuzz (ok)
-chr USE="-harfbuzz" emerge --oneshot media-libs/freetype
+chr "USE='-harfbuzz' emerge --oneshot media-libs/freetype"
 
 # Resolve circular dependency between tiff and libwebp
-chr USE="-tiff" emerge --oneshot media-libs/libwebp
-chr emerge --oneshot media-libs/tiff
-chr emerge --oneshot media-libs/libwebp
+chr "USE='-tiff' emerge --oneshot media-libs/libwebp"
+chr "emerge --oneshot media-libs/tiff"
+chr "emerge --oneshot media-libs/libwebp"
 
 # Emerge world, but break on errors...
 chr "emerge --verbose --update --deep --newuse --backtrack=1000 --complete-graph @world"
