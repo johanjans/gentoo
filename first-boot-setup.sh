@@ -6,6 +6,7 @@
 # emerge @world
 
 # Enable GURU
+mkdir /etc/portage/repos.conf/
 cat > /etc/portage/repos.conf/guru.conf << 'EOF'
 [guru]
 location = /var/db/repos/guru
@@ -30,7 +31,7 @@ echo "gui-libs/aquamarine ~amd64" >> /etc/portage/package.accept_keywords/hyprla
 echo "dev-libs/hyprland-protocols ~amd64" >> /etc/portage/package.accept_keywords/hyprland
 
 # Unmask GURU specific packages
-echo "gui-apps/swww ~amd64" >> /etc/portage/package.accept_keywords/guru-packages
+echo "gui-apps/awww ~amd64" >> /etc/portage/package.accept_keywords/guru-packages
 echo "gui-apps/hyprshot ~amd64" >> /etc/portage/package.accept_keywords/guru-packages
 echo "sys-auth/hyprpolkitagent ~amd64" >> /etc/portage/package.accept_keywords/guru-packages
 
@@ -42,7 +43,7 @@ emerge --ask --verbose \
     gui-apps/hyprpicker \
     gui-libs/xdg-desktop-portal-hyprland \
     sys-auth/hyprpolkitagent \
-    gui-apps/swww \
+    gui-apps/awww \
     gui-apps/hyprshot \
     media-sound/playerctl \
     x11-terms/kitty \
