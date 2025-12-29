@@ -1,0 +1,108 @@
+/*----------------
+    media info
+----------------*/
+
+#custom-mpris {
+	padding: 0 12px;
+	background-color: @mauve;
+	color: @crust;
+	margin-left: 2px;
+	margin-right: 2px;
+	border-radius: 8px;
+	min-height: 26px;
+}
+#custom-mpris:hover {
+	background-color: @red;
+	color: @crust;
+}
+
+
+/*----------------
+    power menu
+----------------*/
+
+#custom-power_menu {
+	border-radius: 16px;
+	padding: 0 19px 0 16px;
+	color: @accent;
+}
+#custom-power_menu:hover {
+	background-color: @hover-bg;
+}
+
+
+/*------------------------------
+    right modules - pastel bg
+------------------------------*/
+
+#custom-dnd,
+#idle_inhibitor,
+#custom-system-stats,
+#bluetooth,
+#network,
+#pulseaudio,
+#battery,
+#tray,
+#clock {
+	color: @crust;
+	margin-left: 2px;
+	margin-right: 2px;
+}
+
+/* Custom modules - match button appearance with fixed height */
+#custom-dnd,
+#custom-system-stats {
+	background-color: transparent;
+	border-radius: 8px;
+	padding: 0 10px;
+	min-height: 26px;
+}
+
+#custom-dnd label,
+#custom-system-stats label {
+	min-height: 26px;
+}
+
+#custom-dnd {
+	background-color: @pink;
+}
+#custom-dnd:hover {
+	background-color: @red;
+	color: @crust;
+}
+
+#idle_inhibitor {
+	background-color: @sky;
+}
+
+#custom-system-stats {
+	background-color: @peach;
+}
+#custom-system-stats:hover {
+	background-color: @red;
+	color: @crust;
+}
+
+#bluetooth {
+	background-color: @lavender;
+}
+
+#network {
+	background-color: @green;
+}
+
+#pulseaudio {
+	background-color: @maroon;
+}
+
+#battery {
+	background-color: @sky;
+}
+
+#tray {
+	background-color: @peach;
+}
+
+#clock {
+	background-color: @pink;
+}

@@ -1,0 +1,70 @@
+#custom-system-stats:hover,
+#clock:hover,
+#pulseaudio:hover,
+#network:hover,
+#bluetooth:hover,
+#battery:hover,
+#mpris:hover,
+#tray:hover,
+#wireplumber:hover,
+#custom-trigger:hover,
+#custom-system_update:hover {
+	background-color: @red;
+	color: @crust;
+}
+
+/* idle inhibitor - dark text */
+#idle_inhibitor,
+#idle_inhibitor.activated,
+#idle_inhibitor.deactivated {
+	color: @crust;
+}
+
+#idle_inhibitor:hover {
+	background-color: @red;
+	color: @crust;
+}
+
+/* inactive state */
+#pulseaudio.output.muted,
+#pulseaudio.input.source-muted,
+#wireplumber.muted {
+	color: @hover-fg;
+}
+
+/* mpris paused - keep dark text on colored background */
+#mpris.paused {
+	color: @crust;
+}
+
+#custom-system-stats.warning {
+	color: @warning;
+}
+
+#battery.warning {
+	background-color: @maroon;
+	color: @crust;
+}
+
+#battery.warning:hover {
+	background-color: @red;
+	color: @crust;
+}
+
+#custom-system-stats.critical {
+	color: @critical;
+}
+
+#battery.critical {
+	background-color: #ff0000;
+	color: @crust;
+}
+
+#battery.critical:hover {
+	background-color: @red;
+	color: @crust;
+}
+
+#battery.charging {
+	color: @crust;
+}

@@ -1,0 +1,23 @@
+#    _                   _            
+#   (_)_ __  _ __  _   _| |_ _ __ ___ 
+#   | | '_ \| '_ \| | | | __| '__/ __|
+#  _| | | | | |_) | |_| | |_| | | (__ 
+# (_)_|_| |_| .__/ \__,_|\__|_|  \___|
+#           |_|                       
+
+
+# colorize
+set colored-stats On
+set colored-completion-prefix On
+
+# completion
+set show-all-if-ambiguous on
+set completion-ignore-case on
+
+# command history
+"\e[A": history-search-backward
+"\e[B": history-search-forward
+
+# bash keybindings
+"\C-b": "cd ..\n"
+"\C-h": "cd /home/johan\n"

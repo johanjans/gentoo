@@ -1,0 +1,134 @@
+/*-----------
+    spacing
+-----------*/
+
+/* center modules */
+#windowcount,
+#custom-system-stats,
+#idle_inhibitor,
+#pulseaudio,
+#network,
+#bluetooth,
+/* right modules */
+#mpris,
+#battery,
+#tray,
+#clock {
+	margin-left: 6px;
+	margin-right: 6px;
+	padding: 0 8px;
+	border-radius: 8px;
+	color: @crust;
+}
+
+/*------------------
+    window count
+------------------*/
+
+#windowcount {
+	margin-right: 12px;
+	background-color: @overlay0;
+	color: @text;
+}
+#windowcount label {
+	color: @text;
+}
+
+/*-----------------
+    system stats
+-----------------*/
+
+#custom-system-stats {
+	background-color: @green;
+}
+
+/*--------------------
+    idle inhibitor
+--------------------*/
+
+#idle_inhibitor {
+	margin-right: 8px;
+	background-color: @mauve;
+}
+
+/*----------
+    clock
+----------*/
+
+#clock {
+	background-color: @blue;
+}
+
+/*-----------
+    volume
+-----------*/
+
+#pulseaudio {
+	background-color: @pink;
+}
+
+/*-----------
+    network
+-----------*/
+
+#network {
+	background-color: @teal;
+}
+
+/*-------------
+    bluetooth
+-------------*/
+
+#bluetooth {
+	background-color: @lavender;
+}
+
+/*-----------
+    mpris
+-----------*/
+
+#mpris,
+#mpris * ,
+#mpris label {
+	background-color: @flamingo;
+	color: @crust;
+}
+
+/*-------------
+    backlight
+-------------*/
+
+#backlight {
+	background-color: @yellow;
+}
+
+/*-----------
+    battery
+-----------*/
+
+#battery {
+	background-color: @green;
+}
+
+/*---------
+    tray
+---------*/
+
+#tray {
+	background-color: @surface0;
+	color: @text;
+}
+
+
+#tray > .passive {
+	-gtk-icon-effect: dim;
+}
+
+#tray > .needs-attention {
+	-gtk-icon-effect: highlight;
+}
+
+#tray menu {
+	background-color: @surface0;
+	color: @text;
+}

@@ -1,0 +1,183 @@
+{
+	/*------------
+	    layout
+	------------*/
+
+	"modules-left": [
+		"custom/distro",
+		"hyprland/workspaces",
+		"hyprland/window"
+	],
+	"modules-center": [
+		"hyprland/windowcount"
+	],
+	"modules-right": [
+		"custom/mpris",
+		"custom/dnd",
+		"idle_inhibitor",
+		"custom/system-stats",
+		"bluetooth",
+		"network",
+		"pulseaudio",
+		"battery",
+		"tray",
+		"clock"
+	],
+
+	/*-------------
+	    options
+	-------------*/
+
+	"layer": "top",
+	"height": 0,
+	"width": 0,
+	"margin": 0,
+	"spacing": 0,
+	"mode": "dock",
+	"reload_style_on_change": true,
+
+	/*-------------
+	    modules
+	-------------*/
+
+	"custom/distro": {
+		"exec": "~/.config/waybar/scripts/system-update.sh module",
+		"return-type": "json",
+		"interval": 3600,
+		"signal": 1,
+		"on-click": "kitty --class floating -e ~/.config/waybar/scripts/system-update.sh",
+		"on-click-middle": "xdg-open https://archlinux.org/news/",
+		"on-click-right": "kitty --class floating -e ~/.config/waybar/scripts/power-menu.sh"
+	},
+
+	"hyprland/workspaces": {
+		"format": "{name}",
+		"on-scroll-up": "hyprctl dispatch workspace +1",
+		"on-scroll-down": "hyprctl dispatch workspace -1",
+		"cursor": true
+	},
+
+	"hyprland/window": {
+		"format": "{}",
+		"rewrite": {
+			"": "Desktop",
+			"kitty": "Terminal",
+			"zsh": "Terminal",
+			"~": "Terminal"
+		},
+		"swap-icon-label": false
+	},
+
+	"hyprland/windowcount": {
+		"format": "[{}]",
+		"swap-icon-label": false
+	},
+
+	"custom/system-stats": {
+		"exec": "~/.config/waybar/scripts/system-stats.sh",
+		"return-type": "json",
+		"interval": 5
+	},
+
+	"custom/dnd": {
+		"exec": "~/.config/waybar/scripts/dnd.sh",
+		"return-type": "json",
+		"interval": 1,
+		"on-click": "~/.config/waybar/scripts/dnd.sh toggle; pkill -RTMIN+2 waybar",
+		"signal": 2
+	},
+
+	"idle_inhibitor": {
+		"format": "{icon} ",
+		"format-icons": {
+			"activated": "󰈈",
+			"deactivated": "󰈉"
+		},
+		"tooltip-format-activated": "Screen can not sleep",
+		"tooltip-format-deactivated": "Screen can sleep"
+	},
+
+	"clock": {
+		"format": "{:%H:%M}",
+		"tooltip-format": "<i>todo: week numbers are off by -1!</i>\n{calendar}",
+		"locale": "en_US.UTF-8",
+		"calendar": {
+			"mode": "month",
+			"mode-mon-col": 6,
+			"weeks-pos": "left",
+			"on-scroll": 1,
+			"format": {
+				"months": "<span color='#89b4fa'><b>{}</b></span>",
+				"days": "<span color='#cdd6f4'>{}</span>",
+				"weeks": "<span color='#fab387'><b>v{}</b></span>",
+				"weekdays": "<span color='#a6adc8'><i>{}</i></span>",
+				"today": "<span color='#f38ba8'><b>{}</b></span>"
+			}
+		},
+		"actions": {
+			"on-click": "mode"
+		}
+	},
+
+	"pulseaudio": {
+		"format": "{icon} {volume}%",
+		"format-muted": "󰝟 muted",
+		"format-icons": {
+			"default": ["󰕿", "󰖀", "󰕾"],
+			"headphone": "󰋋",
+			"headset": "󰋎"
+		},
+		"tooltip-format": "Output: {desc}",
+		"on-click": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle",
+		"on-click-right": "pavucontrol"
+	},
+
+	"network": {
+		"interval": 10,
+		"format-wifi": "{icon} {essid}",
+		"format-ethernet": "󰈀",
+		"format-disconnected": "󰤯",
+		"format-disabled": "󰤮",
+		"format-icons": ["󰤟", "󰤢", "󰤥", "󰤨"],
+		"tooltip-format-wifi": "<b>Network</b>: {essid}\n<b>IP</b>: {ipaddr}/{cidr}\n<b>Strength</b>: {signalStrength}%",
+		"tooltip-format-disconnected": "Wi-Fi Disconnected",
+		"on-click": "kitty --class floating -e ~/.config/waybar/scripts/network.sh"
+	},
+
+	"bluetooth": {
+		"format-off": "󰂲 off",
+		"format-on": "󰂯 on",
+		"format-connected": "󰂱 on ({num_connections})",
+		"tooltip-format-on": "Bluetooth On (no devices connected)",
+		"tooltip-format-connected": "{num_connections} device(s) connected:\n{device_enumerate}",
+		"tooltip-format-enumerate-connected": "  • {device_alias}",
+		"on-click": "kitty --class floating -e ~/.config/waybar/scripts/bluetooth.sh",
+		"on-click-right": "kitty --class floating -e ~/.config/waybar/scripts/bluetooth.sh disconnect"
+	},
+
+	"custom/mpris": {
+		"exec": "~/.config/waybar/scripts/mpris.sh",
+		"return-type": "json",
+		"interval": 2,
+		"on-click": "playerctl play-pause",
+		"on-scroll-up": "playerctl next",
+		"on-scroll-down": "playerctl previous"
+	},
+
+	"battery": {
+		"states": {
+			"warning": 20,
+			"critical": 10
+		},
+		"format": "{icon} {capacity}%",
+		"format-charging": "󰉁 {capacity}%",
+		"format-icons": ["󰂎", "󰁻", "󰁼", "󰁽", "󰁾", "󰁿", "󰂀", "󰂁", "󰂂", "󰁹"],
+		"tooltip-format": "Discharging: {time}",
+		"tooltip-format-charging": "Charging: {time}"
+	},
+
+	"tray": {
+		"icon-size": 16,
+		"spacing": 8
+	}
+}

@@ -1,0 +1,60 @@
+/*--------------
+    distro logo
+--------------*/
+
+#custom-distro {
+	margin-right: 12px;
+}
+
+#custom-distro.updates-available {
+	color: @yellow;
+}
+
+#custom-distro.offline {
+	color: @red;
+}
+
+/*--------------
+    username
+--------------*/
+
+#custom-user {
+	padding-right: 12px;
+}
+
+/*----------------
+    workspaces
+----------------*/
+
+#custom-left_div.1,
+#custom-right_div.1 {
+	color: @workspaces;
+}
+#workspaces {
+	padding: 0 1px;
+	background-color: transparent;
+}
+#workspaces button.active,
+#workspaces button.focused {
+	background-color: @maroon;
+	border-radius: 8px;
+}
+#workspaces button.active label,
+#workspaces button.focused label {
+	color: @crust;
+}
+#workspaces button:hover {
+	background-color: @red;
+	border-radius: 8px;
+}
+#workspaces button:hover label {
+	color: @crust;
+}
+
+/*------------------
+    window title
+------------------*/
+
+#window {
+	margin-left: 12px;
+}

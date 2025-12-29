@@ -1,0 +1,106 @@
+/* --- COLORS (Hardcoded to remove dependencies) --- */
+@define-color background #1e1e2e;   /* Dark Blue-Grey */
+@define-color text       #cdd6f4;   /* White-ish */
+@define-color mauve      #cba6f7;   /* Purple Accent */
+@define-color red        #f38ba8;   /* Red Accent */
+@define-color lavender   #b4befe;   /* Light Blue Accent */
+
+/* --- GLOBAL SETTINGS --- */
+* {
+    font-family: 'CodeNewRoman Nerd Font Mono', monospace;
+    font-size: 18px;
+    outline: none;
+    border: none;
+    text-shadow: none;
+    /* Reset background to transparent so we can control it per element */
+    background-color: transparent; 
+}
+
+/* --- MAIN WINDOW --- */
+window {
+    margin: 0px;
+    padding: 10px;
+    border-radius: 10px; /* Slight rounding for modern look */
+    
+    /* Semi-transparent dark background. 
+       Adjust the last number (0.85) to change opacity:
+       0.0 = invisible, 1.0 = solid block 
+    */
+    background-color: rgba(30, 30, 46, 0.85); 
+}
+
+#inner-box {
+    margin: 5px;
+    padding: 5px;
+    border: none;
+    background-color: transparent;
+}
+
+#outer-box {    
+    margin: 5px;
+    padding: 5px;
+    border: none;
+    background-color: transparent;
+}
+
+#scroll {
+    margin: 0px;
+    padding: 10px;
+    border: none;
+}
+
+/* --- SEARCH BAR --- */
+#input {
+    margin: 5px;
+    padding: 15px;
+    border: none;
+    outline: none;
+    color: @text;
+    border-radius: 10px;
+    /* Slightly lighter background for the input box */
+    background-color: rgba(255, 255, 255, 0.05); 
+}
+
+#input image {
+    border: none;
+    color: @red;
+    padding-right: 10px;
+}
+
+#input:focus {
+    outline: none;
+    border: 2px solid @mauve; /* subtle border when typing */
+}
+
+/* --- TEXT ITEMS --- */
+#text {
+    margin: 5px;
+    border: none;
+    color: @text;
+}
+
+#entry {
+    border: none;
+    margin: 5px;
+    padding: 10px;
+    border-radius: 10px;
+    background-color: transparent;
+}
+
+#entry arrow {
+    border: none;
+    color: @lavender;
+}
+
+/* --- SELECTED ITEM --- */
+#entry:selected {
+    /* Highlight color for the selected item */
+    background-color: rgba(203, 166, 247, 0.2); /* Low opacity Mauve */
+    border-radius: 10px;
+    outline: none;
+}
+
+#entry:selected #text {
+    color: @mauve;
+    font-weight: bold;
+}
