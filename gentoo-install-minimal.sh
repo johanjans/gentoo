@@ -171,7 +171,8 @@ INPUT_DEVICES="libinput"
 # USE flags (Wayland/Hyprland ready)
 USE="bluetooth pipewire networkmanager elogind dbus \
      wayland gles2 opengl vulkan X screencast vaapi \
-     zstd -systemd -gnome -kde -doc -test"
+     zstd udisks policykit acpi \
+     -systemd -gnome -kde -test -doc"
 
 # Bootloader
 GRUB_PLATFORMS="efi-64"
@@ -205,7 +206,7 @@ mount --make-slave /mnt/gentoo/run
 
 echo "Syncing Portage and setting profile..."
 
-chr "emerge-webrsync"
+chr "emerge --sync"
 chr "eselect profile set default/linux/amd64/23.0/desktop" || true
 
 # Enable GURU repository for grub-btrfs
