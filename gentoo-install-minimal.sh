@@ -180,6 +180,9 @@ EOF
 # Create portage directories
 mkdir -p /mnt/gentoo/etc/portage/{package.use,package.license,package.accept_keywords}
 
+# Fix a circular dependency (dracut) and make sure that grub is updated on new kernel install
+echo "sys-kernel/installkernel dracut grub" >> /mnt/gentoo/etc/portage/package.use/installkernel
+
 ###############################################################################
 # CHROOT SETUP
 ###############################################################################
@@ -220,9 +223,6 @@ chr "emerge --oneshot media-libs/libwebp"
 
 # Resolve circular dependency (ok)
 chr "USE='-truetype' emerge --oneshot dev-python/pillow"
-
-# Resolve circular dependency (?)
-chr "USE='dracut' emerge --oneshot sys-kernel/installkernel-60"
 
 # Emerge world, but break on errors...
 chr "emerge --verbose --update --deep --newuse --backtrack=1000 --complete-graph @world"
@@ -294,7 +294,6 @@ chr "emerge --verbose \
     sys-kernel/linux-firmware \
     sys-firmware/intel-microcode \
     sys-firmware/sof-firmware \
-    sys-kernel/installkernel \
     sys-kernel/gentoo-kernel"
 
 ###############################################################################
