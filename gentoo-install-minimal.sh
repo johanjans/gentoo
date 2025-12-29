@@ -180,13 +180,6 @@ EOF
 # Create portage directories
 mkdir -p /mnt/gentoo/etc/portage/{package.use,package.license,package.accept_keywords}
 
-# Circular dependency workaround for initial build
-cat > /mnt/gentoo/etc/portage/package.use/zzz-bootstrap << 'EOF'
-# Temporary: break circular deps (removed after @world update)
-media-libs/harfbuzz truetype
-media-libs/freetype -harfbuzz
-EOF
-
 ###############################################################################
 # CHROOT SETUP
 ###############################################################################
@@ -217,20 +210,8 @@ chr "emerge --verbose app-eselect/eselect-repository"
 chr "eselect repository enable guru"
 chr "emerge --sync guru"
 
-# Break freetype <-> harfbuzz circular dependency before @world
-# Use --nodeps to force build order regardless of portage's dependency resolver
-echo "Resolving freetype/harfbuzz circular dependency..."
-chr "USE='-harfbuzz' emerge --verbose --oneshot --nodeps media-libs/freetype"
-chr "emerge --verbose --oneshot --nodeps media-libs/harfbuzz"
-chr "emerge --verbose --oneshot media-libs/freetype"
-chr "rm -f /etc/portage/package.use/zzz-bootstrap"
-
 echo "Updating @world (this takes a while)..."
-chr "emerge --verbose --update --deep --newuse --backtrack=100 --complete-graph @world"
-
-# Rebuild freetype/harfbuzz with proper linking after @world
-echo "Final rebuild of freetype/harfbuzz..."
-chr "emerge --verbose --oneshot media-libs/freetype media-libs/harfbuzz"
+chr "emerge --verbose --update --deep --newuse --backtrack=1000 --complete-graph --keep-going @world"
 
 ###############################################################################
 # LOCALE & TIMEZONE
