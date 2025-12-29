@@ -210,13 +210,16 @@ chr "emerge --verbose app-eselect/eselect-repository"
 chr "eselect repository enable guru"
 chr "emerge --sync guru"
 
-# Resolve circular dependency between freetype and harfbuzz (ok)
+# Resolve circular dependency (ok)
 chr "USE='-harfbuzz' emerge --oneshot media-libs/freetype"
 
-# Resolve circular dependency between tiff and libwebp
+# Resolve circular dependency (ok)
 chr "USE='-tiff' emerge --oneshot media-libs/libwebp"
 chr "emerge --oneshot media-libs/tiff"
 chr "emerge --oneshot media-libs/libwebp"
+
+# Resolve circular dependency (?)
+chr "USE='-truetype' emerge --oneshot dev-python/pillow"
 
 # Emerge world, but break on errors...
 chr "emerge --verbose --update --deep --newuse --backtrack=1000 --complete-graph @world"
