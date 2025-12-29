@@ -3,6 +3,11 @@
 # Gentoo Linux Installation Script
 # Desktop profile, Btrfs snapshots, Wayland-ready
 #
+
+# loadkeys sv-latin1
+# nmcli device wifi connect SSID --ask
+# git clone https://github.com/johanjans/git
+
 set -e
 
 # Double console font size for readability
