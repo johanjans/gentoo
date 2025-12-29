@@ -57,11 +57,23 @@ read -p "Enter disk name (e.g. nvme0n1): " DISK
 read -p "ERASE /dev/$DISK? Type 'yes' to confirm: " CONFIRM
 [[ "$CONFIRM" == "yes" ]] || die "Aborted"
 
+###############################################################################
+# USER PASSWORD
+###############################################################################
+
+echo ""
+echo "Set password for user '${USERNAME}':"
+read -sp "Password: " USER_PASSWORD
+echo ""
+read -sp "Confirm password: " USER_PASSWORD_CONFIRM
+echo ""
+[[ "$USER_PASSWORD" == "$USER_PASSWORD_CONFIRM" ]] || die "Passwords do not match"
+[[ -n "$USER_PASSWORD" ]] || die "Password cannot be empty"
+
 # Define partition paths
 EFI_PART="/dev/${DISK}${PSUF}1"
 SWAP_PART="/dev/${DISK}${PSUF}2"
 ROOT_PART="/dev/${DISK}${PSUF}3"
-HOME_PART="/dev/${DISK}${PSUF}4"
 
 ###############################################################################
 # PARTITIONING
@@ -75,8 +87,7 @@ wipefs -af /dev/$DISK
 parted -s /dev/$DISK mklabel gpt \
     mkpart EFI fat32 1M 1G set 1 esp on \
     mkpart swap linux-swap 1G 5G \
-    mkpart root btrfs 5G 130G \
-    mkpart home btrfs 130G 100%
+    mkpart root btrfs 5G 100%
 
 partprobe /dev/$DISK
 sleep 2
@@ -90,7 +101,6 @@ echo "Creating filesystems..."
 mkfs.vfat -F32 $EFI_PART
 mkswap $SWAP_PART && swapon $SWAP_PART
 mkfs.btrfs -f $ROOT_PART
-mkfs.btrfs -f $HOME_PART
 
 ###############################################################################
 # BTRFS SUBVOLUMES
@@ -98,16 +108,9 @@ mkfs.btrfs -f $HOME_PART
 
 echo "Creating Btrfs subvolumes..."
 
-# Root partition subvolumes
 mount $ROOT_PART /mnt/gentoo
 btrfs subvolume create /mnt/gentoo/@
-btrfs subvolume create /mnt/gentoo/@snapshots
-umount /mnt/gentoo
-
-# Home partition subvolumes
-mount $HOME_PART /mnt/gentoo
 btrfs subvolume create /mnt/gentoo/@home
-btrfs subvolume create /mnt/gentoo/@home-snapshots
 umount /mnt/gentoo
 
 ###############################################################################
@@ -116,17 +119,9 @@ umount /mnt/gentoo
 
 echo "Mounting filesystems..."
 
-# Root
 mount -o noatime,compress=zstd,subvol=@ $ROOT_PART /mnt/gentoo
-
-# Create mount points
-mkdir -p /mnt/gentoo/{home,.snapshots,efi}
-
-# Snapshots, home, EFI
-mount -o noatime,compress=zstd,subvol=@snapshots $ROOT_PART /mnt/gentoo/.snapshots
-mount -o noatime,compress=zstd,subvol=@home $HOME_PART /mnt/gentoo/home
-mkdir -p /mnt/gentoo/home/.snapshots
-mount -o noatime,compress=zstd,subvol=@home-snapshots $HOME_PART /mnt/gentoo/home/.snapshots
+mkdir -p /mnt/gentoo/{home,efi}
+mount -o noatime,compress=zstd,subvol=@home $ROOT_PART /mnt/gentoo/home
 mount $EFI_PART /mnt/gentoo/efi
 
 ###############################################################################
@@ -209,10 +204,14 @@ echo "Syncing Portage and setting profile..."
 chr "emerge --sync"
 chr "eselect profile set default/linux/amd64/23.0/desktop" || true
 
-# Enable GURU repository for grub-btrfs
-chr "emerge --verbose app-eselect/eselect-repository"
-chr "eselect repository enable guru"
-chr "emerge --sync guru"
+###############################################################################
+# USER ACCOUNT
+###############################################################################
+
+echo "Creating user account..."
+
+chr "useradd -m -G users,wheel,audio,video,input -s /bin/bash ${USERNAME}"
+echo "${USERNAME}:${USER_PASSWORD}" | chr "chpasswd"
 
 # Resolve circular dependency (ok)
 chr "USE='-harfbuzz' emerge --oneshot media-libs/freetype"
@@ -272,17 +271,13 @@ sed -i "s/keymap=\"us\"/keymap=\"${KEYMAP}\"/" /mnt/gentoo/etc/conf.d/keymaps
 echo "Generating fstab..."
 
 cat > /mnt/gentoo/etc/fstab << EOF
-# Root
-UUID=$(blkid -s UUID -o value $ROOT_PART)  /                 btrfs  noatime,compress=zstd,subvol=@                0 1
-UUID=$(blkid -s UUID -o value $ROOT_PART)  /.snapshots       btrfs  noatime,compress=zstd,subvol=@snapshots       0 2
-
-# Home
-UUID=$(blkid -s UUID -o value $HOME_PART)  /home             btrfs  noatime,compress=zstd,subvol=@home            0 2
-UUID=$(blkid -s UUID -o value $HOME_PART)  /home/.snapshots  btrfs  noatime,compress=zstd,subvol=@home-snapshots  0 2
+# Root & Home
+UUID=$(blkid -s UUID -o value $ROOT_PART)  /      btrfs  noatime,compress=zstd,subvol=@      0 1
+UUID=$(blkid -s UUID -o value $ROOT_PART)  /home  btrfs  noatime,compress=zstd,subvol=@home  0 2
 
 # Swap & EFI
-UUID=$(blkid -s UUID -o value $SWAP_PART)  none              swap   sw                                             0 0
-UUID=$(blkid -s UUID -o value $EFI_PART)   /efi              vfat   noatime                                        0 2
+UUID=$(blkid -s UUID -o value $SWAP_PART)  none   swap   sw                                   0 0
+UUID=$(blkid -s UUID -o value $EFI_PART)   /efi   vfat   noatime                              0 2
 EOF
 
 ###############################################################################
@@ -308,7 +303,7 @@ chr "emerge --verbose \
     sys-apps/dbus \
     net-misc/networkmanager \
     net-wireless/bluez \
-    media-sound/pipewire \
+    media-video/pipewire \
     media-video/wireplumber \
     sys-fs/btrfs-progs \
     app-admin/doas \
@@ -317,6 +312,9 @@ chr "emerge --verbose \
     net-misc/chrony \
     app-backup/snapper \
     dev-vcs/git"
+
+# Add user to groups created by installed packages
+chr "usermod -aG pipewire,plugdev,usb ${USERNAME}" 2>/dev/null || true
 
 ###############################################################################
 # SERVICES
@@ -333,7 +331,7 @@ chr "rc-update add cronie default"
 chr "rc-update add chronyd default"
 
 ###############################################################################
-# DOAS (SUDO ALTERNATIVE)
+# DOAS
 ###############################################################################
 
 echo "Configuring doas..."
@@ -349,58 +347,12 @@ chmod 600 /mnt/gentoo/etc/doas.conf
 
 echo "Configuring Snapper for Btrfs snapshots..."
 
-# Root snapshots
-# (Snapper wants to create its own .snapshots subvolume, so we work around it)
-umount /mnt/gentoo/.snapshots
 chr "snapper -c root create-config /"
-chr "btrfs subvolume delete /.snapshots"
-mkdir -p /mnt/gentoo/.snapshots
-mount -o noatime,compress=zstd,subvol=@snapshots $ROOT_PART /mnt/gentoo/.snapshots
-
-# Home snapshots
-umount /mnt/gentoo/home/.snapshots
-chr "snapper -c home create-config /home"
-chr "btrfs subvolume delete /home/.snapshots"
-mkdir -p /mnt/gentoo/home/.snapshots
-mount -o noatime,compress=zstd,subvol=@home-snapshots $HOME_PART /mnt/gentoo/home/.snapshots
-
-# Snapper settings
-sed -i "s/ALLOW_USERS=\"\"/ALLOW_USERS=\"${USERNAME}\"/" /mnt/gentoo/etc/snapper/configs/home
-sed -i 's/TIMELINE_CREATE="yes"/TIMELINE_CREATE="no"/' /mnt/gentoo/etc/snapper/configs/root
-sed -i 's/TIMELINE_CREATE="yes"/TIMELINE_CREATE="yes"/' /mnt/gentoo/etc/snapper/configs/home
-
-###############################################################################
-# PORTAGE SNAPSHOT HOOKS
-###############################################################################
-
-echo "Setting up automatic snapshots for Portage..."
-
-mkdir -p /mnt/gentoo/etc/portage/bashrc.d
-
-# Pre-install snapshot
-cat > /mnt/gentoo/etc/portage/bashrc.d/snapper-pre.sh << 'EOF'
-if [[ ${EBUILD_PHASE} == "setup" && -z ${SNAPPER_PRE_DONE} ]]; then
-    export SNAPPER_PRE_DONE=1
-    snapper -c root create -t pre -d "portage: ${CATEGORY}/${PN}" \
-        --print-number > /tmp/.snapper_pre_num 2>/dev/null || true
-fi
-EOF
-
-# Post-install snapshot
-cat > /mnt/gentoo/etc/portage/bashrc.d/snapper-post.sh << 'EOF'
-if [[ ${EBUILD_PHASE} == "postinst" && -f /tmp/.snapper_pre_num ]]; then
-    PRE=$(cat /tmp/.snapper_pre_num)
-    snapper -c root create -t post --pre-number="$PRE" \
-        -d "portage: ${CATEGORY}/${PN}" 2>/dev/null || true
-    rm -f /tmp/.snapper_pre_num
-fi
-EOF
 
 # Daily cleanup cron job
 cat > /mnt/gentoo/etc/cron.daily/snapper << 'EOF'
 #!/bin/sh
 snapper -c root cleanup number
-snapper -c home cleanup number
 EOF
 chmod +x /mnt/gentoo/etc/cron.daily/snapper
 
@@ -410,33 +362,9 @@ chmod +x /mnt/gentoo/etc/cron.daily/snapper
 
 echo "Installing GRUB bootloader..."
 
-# Accept grub-btrfs from GURU
-echo "app-backup/grub-btrfs ~amd64" >> /mnt/gentoo/etc/portage/package.accept_keywords/grub-btrfs
-
 chr "emerge --verbose sys-boot/grub sys-boot/efibootmgr"
-chr "emerge --verbose app-backup/grub-btrfs" || true
-
-# Catppuccin GRUB theme
-echo "Installing Catppuccin GRUB theme..."
-chr "git clone --depth1 https://github.com/catppuccin/grub /tmp/catppuccin-grub" || true
-chr "mkdir -p /usr/share/grub/themes" || true
-chr "cp -r /tmp/catppuccin-grub/src/* /usr/share/grub/themes/" || true
-
-cat >> /mnt/gentoo/etc/default/grub << 'EOF'
-GRUB_THEME="/usr/share/grub/themes/catppuccin-mocha-grub-theme/theme.txt"
-GRUB_GFXMODE=1920x1080
-EOF
-
 chr "grub-install --target=x86_64-efi --efi-directory=/efi --removable"
 chr "grub-mkconfig -o /boot/grub/grub.cfg"
-
-###############################################################################
-# USER ACCOUNT
-###############################################################################
-
-echo "Creating user account..."
-
-chr "useradd -m -G users,wheel,audio,video,pipewire,input,plugdev,usb,bluetooth -s /bin/bash ${USERNAME}"
 
 ###############################################################################
 # CLEANUP
@@ -445,6 +373,15 @@ chr "useradd -m -G users,wheel,audio,video,pipewire,input,plugdev,usb,bluetooth 
 echo "Cleaning up..."
 
 chr "emerge --verbose --depclean"
+
+###############################################################################
+# DISABLE ROOT LOGIN
+###############################################################################
+
+echo "Disabling root login..."
+
+chr "passwd -l root"
+chr "usermod -s /sbin/nologin root"
 
 ###############################################################################
 # DONE
@@ -456,24 +393,18 @@ cat << EOF
                          INSTALLATION COMPLETE
 ================================================================================
 
-Set passwords:
-    chroot /mnt/gentoo passwd
-    chroot /mnt/gentoo passwd ${USERNAME}
+User '${USERNAME}' created with password set.
+Root login has been disabled.
 
-Then reboot into your new system.
+Reboot into your new system.
 
 --------------------------------------------------------------------------------
 SNAPSHOT COMMANDS
 --------------------------------------------------------------------------------
 
-    snapper -c root list              # List system snapshots
-    snapper -c home list              # List home snapshots
-    snapper -c root undochange 1..0   # Revert last system change
-    snapper -c home undochange 1..0   # Revert last home change
-    snapper -c root create -d "desc"  # Create manual snapshot
-
-Portage automatically creates pre/post snapshots for each package.
-Boot into snapshots via GRUB "Snapshots" menu.
+    snapper -c root list              # List snapshots
+    snapper -c root create -d "desc"  # Create snapshot before updates
+    snapper -c root undochange 1..0   # Revert last change
 
 ================================================================================
 EOF
