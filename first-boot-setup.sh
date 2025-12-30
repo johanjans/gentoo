@@ -72,6 +72,8 @@ emerge --ask --verbose \
     media-fonts/symbols-nerd-font \
     media-fonts/nerdfonts \
     media-fonts/noto \
+    media-fonts/noto-emoji \
+    media-fonts/dejavu \
     app-misc/fastfetch \
     x11-libs/libnotify \
     gui-apps/grim \
