@@ -59,4 +59,6 @@ emerge --ask --verbose \
     x11-libs/libnotify \
     gui-apps/grim \
     gui-apps/slurp \
-    app-misc/brightnessctl
+    app-misc/brightnessctl\
+    gui-apps/hyprland-plugins\
+    gui-wm/hyprland-contrib
