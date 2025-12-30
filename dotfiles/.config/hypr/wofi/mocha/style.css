@@ -62,7 +62,7 @@ window {
   padding: 10px;
   border: 0.16em solid @lavender;
   border-radius: 0.1em;
-  background-color: @base;
+  background-color: rgba(30, 30, 46, 0.85);
   animation: slideIn 0.5s ease-in-out both;
 }
 
@@ -73,7 +73,7 @@ window {
   }
 
   100% {
-     opacity: 1;
+     opacity: 0.75;
   }
 }
 
@@ -82,7 +82,7 @@ window {
   margin: 5px;
   padding: 10px;
   border: none;
-  background-color: @base;
+  background-color: transparent;
   animation: fadeIn 0.5s ease-in-out both;
 }
 
@@ -102,7 +102,7 @@ window {
   margin: 5px;
   padding: 10px;
   border: none;
-  background-color: @base;
+  background-color: transparent;
 }
 
 /* Scroll */
@@ -110,7 +110,7 @@ window {
   margin: 0px;
   padding: 10px;
   border: none;
-  background-color: @base;
+  background-color: transparent;
 }
 
 /* Input */
@@ -120,7 +120,7 @@ window {
   border: none;
   border-radius: 0.1em;
   color: @text;
-  background-color: @base;
+  background-color: transparent;
   animation: fadeIn 0.5s ease-in-out both;
 }
 
@@ -142,7 +142,7 @@ window {
 }
 
 #entry {
-  background-color: @base;
+  background-color: transparent;
 }
 
 #entry arrow {
