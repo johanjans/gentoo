@@ -73,7 +73,8 @@ get-device-list() {
 	done
 	printf '\n%bScanning stopped.%b\n\n' "$RED" "$RST"
 
-	list=$(bluetoothctl devices | sed 's/^Device //')
+	# Strip ANSI color codes and remove 'Device ' prefix
+	list=$(bluetoothctl devices | sed 's/\x1b\[[0-9;]*m//g; s/^Device //')
 	if [[ -z $list ]]; then
 		notify-send 'Bluetooth' 'No devices found' -i 'package-broken'
 		return 1
@@ -141,7 +142,15 @@ pair-and-connect() {
 }
 
 get-connected-devices() {
-	list=$(bluetoothctl devices Connected | sed 's/^Device //')
+	list=""
+	# Strip ANSI color codes before parsing
+	while read -r _ addr name; do
+		if bluetoothctl info "$addr" 2>/dev/null | grep -q "Connected: yes"; then
+			list+="$addr $name"$'\n'
+		fi
+	done < <(bluetoothctl devices | sed 's/\x1b\[[0-9;]*m//g')
+	list=${list%$'\n'}  # Remove trailing newline
+
 	if [[ -z $list ]]; then
 		notify-send 'Bluetooth' 'No connected devices' -i 'network-bluetooth'
 		return 1

@@ -1,0 +1,93 @@
+13:26:28.757: Platform: Wayland
+13:26:28.757: CPU Name: 12th Gen Intel(R) Core(TM) i7-12800H
+13:26:28.757: CPU Speed: 403.607MHz
+13:26:28.757: Physical Cores: 14, Logical Cores: 20
+13:26:28.757: Physical Memory: 31273MB Total, 21623MB Free
+13:26:28.757: Kernel Version: Linux 6.12.58-gentoo-dist
+13:26:28.757: Distribution: Gentoo "2.18"
+13:26:28.757: Desktop Environment: Hyprland
+13:26:28.757: Session Type: wayland
+13:26:28.758: Current Date/Time: 2025-12-30, 01:26:28 PM
+13:26:28.758: Browser Hardware Acceleration: true
+13:26:28.759: Qt Version: 6.10.1 (runtime), 6.10.1 (compiled)
+13:26:28.759: Portable mode: false
+13:26:28.804: OBS 32.0.4 (linux)
+13:26:28.804: ---------------------------------
+13:26:28.805: ---------------------------------
+13:26:28.805: audio settings reset:
+13:26:28.805: 	samples per sec: 48000
+13:26:28.805: 	speakers:        2
+13:26:28.805: 	max buffering:   960 milliseconds
+13:26:28.805: 	buffering type:  dynamically increasing
+13:26:28.806: ---------------------------------
+13:26:28.806: Initializing OpenGL...
+13:26:28.806: Using EGL/Wayland
+13:26:28.831: Initialized EGL 1.5
+13:26:28.841: Loading up OpenGL on adapter Intel Mesa Intel(R) Iris(R) Xe Graphics (ADL GT2)
+13:26:28.841: OpenGL loaded successfully, version 4.6 (Core Profile) Mesa 25.2.7, shading language 4.60
+13:26:28.872: ---------------------------------
+13:26:28.872: video settings reset:
+13:26:28.872: 	base resolution:   1920x1080
+13:26:28.872: 	output resolution: 1920x1080
+13:26:28.872: 	downscale filter:  Bicubic
+13:26:28.872: 	fps:               60/1
+13:26:28.872: 	format:            NV12
+13:26:28.872: 	YUV mode:          Rec. 709/Partial
+13:26:28.872: NV12 texture support enabled
+13:26:28.872: P010 texture support not available
+13:26:28.880: ---------------------------------
+13:26:28.900: [pipewire] Available capture sources:
+13:26:28.900: [pipewire]     - Monitor source
+13:26:28.900: [pipewire]     - Window source
+13:26:28.903: VAAPI: Failed to initialize display in vaapi_device_h264_supported
+13:26:28.903: VAAPI: Failed to open device '/dev/dri/renderD129'
+13:26:28.903: FFmpeg VAAPI H264 encoding not supported
+13:26:28.903: VAAPI: Failed to initialize display in vaapi_device_av1_supported
+13:26:28.903: VAAPI: Failed to open device '/dev/dri/renderD129'
+13:26:28.903: FFmpeg VAAPI AV1 encoding not supported
+13:26:28.903: VAAPI: Failed to initialize display in vaapi_device_hevc_supported
+13:26:28.903: VAAPI: Failed to open device '/dev/dri/renderD129'
+13:26:28.903: FFmpeg VAAPI HEVC encoding not supported
+13:26:28.907: ---------------------------------
+13:26:28.907:   Loaded Modules:
+13:26:28.907:     text-freetype2.so
+13:26:28.907:     rtmp-services.so
+13:26:28.907:     obs-x264.so
+13:26:28.907:     obs-vst.so
+13:26:28.907:     obs-transitions.so
+13:26:28.907:     obs-outputs.so
+13:26:28.907:     obs-filters.so
+13:26:28.907:     obs-ffmpeg.so
+13:26:28.907:     linux-pipewire.so
+13:26:28.907:     linux-capture.so
+13:26:28.907:     linux-alsa.so
+13:26:28.907:     image-source.so
+13:26:28.907:     frontend-tools.so
+13:26:28.907: ---------------------------------
+13:26:28.907: ---------------------------------
+13:26:28.907: Available Encoders:
+13:26:28.907:   Video Encoders:
+13:26:28.907: 	- obs_x264 (x264)
+13:26:28.907:   Audio Encoders:
+13:26:28.907: 	- ffmpeg_aac (FFmpeg AAC)
+13:26:28.907: 	- ffmpeg_opus (FFmpeg Opus)
+13:26:28.907: 	- ffmpeg_pcm_s16le (FFmpeg PCM (16-bit))
+13:26:28.907: 	- ffmpeg_pcm_s24le (FFmpeg PCM (24-bit))
+13:26:28.907: 	- ffmpeg_pcm_f32le (FFmpeg PCM (32-bit float))
+13:26:28.907: 	- ffmpeg_alac (FFmpeg ALAC (24-bit))
+13:26:28.907: 	- ffmpeg_flac (FFmpeg FLAC (16-bit))
+13:26:28.907: ==== Startup complete ===============================================
+13:26:28.934: All scene data cleared
+13:26:28.934: ------------------------------------------------
+13:26:28.935: PipeWire initialized
+13:26:28.936: Switched to scene 'Scene'
+13:26:28.936: ------------------------------------------------
+13:26:28.936: Loaded scenes:
+13:26:28.936: - scene 'Scene':
+13:26:28.936:     - source: 'Screen Capture (PipeWire)' (pipewire-screen-capture-source)
+13:26:28.936: ------------------------------------------------
+13:26:45.303: ==== Shutting down ==================================================
+13:26:45.310: [portals] Request cancelled
+13:26:45.342: All scene data cleared
+13:26:45.342: ------------------------------------------------
+13:26:45.342: The Wayland connection broke. Did the Wayland compositor die?

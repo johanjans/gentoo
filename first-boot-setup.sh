@@ -92,6 +92,8 @@ emerge --ask --verbose\
     texlive\
     inkscape\
     vscode\
+    mpv\
+    pcmanfm-qt
 
 # install some AI-stuff
 curl -fsSL https://claude.ai/install.sh | bash
