@@ -38,7 +38,7 @@
 }
 
 #custom-system-stats.warning {
-	color: @warning;
+	color: @crust;
 }
 
 #battery.warning {
@@ -52,7 +52,7 @@
 }
 
 #custom-system-stats.critical {
-	color: @critical;
+	color: @crust;
 }
 
 #battery.critical {

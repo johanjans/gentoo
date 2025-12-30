@@ -70,7 +70,8 @@
 	"custom/system-stats": {
 		"exec": "~/.config/waybar/scripts/system-stats.sh",
 		"return-type": "json",
-		"interval": 5
+		"interval": 5,
+		"on-click": "kitty --class floating -e btop"
 	},
 
 	"custom/dnd": {
