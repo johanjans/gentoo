@@ -46,6 +46,7 @@ echo "media-video/obs-studio pipewire" >> /etc/portage/package.use/obs-studio
 echo "media-video/pipewire dbus" >> /etc/portage/package.use/pipewire
 echo "gui-apps/waybar network pulseaudio tray mpris wifi experimental" >> /etc/portage/package.use/waybar
 echo "dev-libs/libdbusmenu gtk3" >> /etc/portage/package.use/libdbusmenu
+echo "media-video/ffmpeg opus" >> /etc/portage/package.use/ffmpeg
 
 # Install hyprland
 emerge --ask --verbose \
