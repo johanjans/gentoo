@@ -42,6 +42,7 @@ echo "net-im/mattermost-desktop-bin ~amd64" >> /etc/portage/package.accept_keywo
 
 # USE flag settings for hyprland
 echo "gui-apps/waybar network pulseaudio tray mpris wifi experimental" >> /etc/portage/package.use/waybar
+echo "dev-libs/libdbusmenu gtk3" >> /etc/portage/package.use/libdbusmenu
 
 # Install hyprland
 emerge --ask --verbose \
