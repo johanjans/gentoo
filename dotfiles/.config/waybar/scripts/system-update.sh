@@ -1,88 +1,63 @@
 #!/usr/bin/env bash
 #
-# Check for official and AUR package updates and upgrade them. When run with the
+# Check for Gentoo package updates and upgrade them. When run with the
 # 'module' argument, output the status icon and update counts in JSON format for
 # Waybar
 #
 # Requirements:
-# 	- checkupdates (pacman-contrib)
+# 	- eix (for eix-diff to check updates)
 # 	- notify-send (libnotify)
-# 	- optional: an AUR helper
 #
-# Author: Jesse Mirabel <sejjymvm@gmail.com>
-# Created: August 16, 2025
+# Author: Jesse Mirabel <sejjymvm@gmail.com> (original Arch version)
+# Modified for Gentoo
 # License: MIT
 
 GRN='\033[1;32m'
 BLU='\033[1;34m'
+YEL='\033[1;33m'
 RST='\033[0m'
-
-TIMEOUT=10
-HELPERS=('aura' 'paru' 'pikaur' 'trizen' 'yay')
 
 # Packages that should be highlighted as dangerous (partial matches)
 DANGEROUS_PATTERNS=(
 	'wayland'
 	'hyprland'
-	'linux-zen'
-	'linux-lts'
-	'linux-hardened'
+	'gentoo-sources'
+	'linux-firmware'
 	'nvidia'
 	'mesa'
 	'vulkan'
 	'xorg'
-	'systemd'
+	'openrc'
 	'glibc'
 	'gcc'
 	'pipewire'
 	'wireplumber'
-	'mkinitcpio'
 	'grub'
+	'efibootmgr'
 )
-
-detect-helper() {
-	local h
-	for h in "${HELPERS[@]}"; do
-		if command -v "$h" > /dev/null; then
-			helper=$h
-			break
-		fi
-	done
-}
 
 check-updates() {
 	is_online=true
-	repo=0
-	aur=0
-	repo_packages=""
-	aur_packages=""
+	update_count=0
+	update_packages=""
 
-	local rout rstat
-	rout=$(timeout $TIMEOUT checkupdates)
-	rstat=$?
-	# 2 means no updates are available
-	if ((rstat != 0 && rstat != 2)); then
-		is_online=false
-		return 1
+	# Sync portage tree quietly and check for updates
+	if ! emerge --sync -q &>/dev/null; then
+		# If sync fails, try to use cached data
+		:
 	fi
-	repo=$(grep -cve '^\s*$' <<< "$rout")
-	repo_packages="$rout"
 
-	if [[ -z $helper ]]; then
+	# Use emerge -puDN @world to check for updates
+	local output
+	output=$(emerge -puDN @world 2>/dev/null | grep -E "^\[ebuild" | sed 's/\[ebuild[^]]*\] //' | cut -d' ' -f1)
+
+	if [[ -z "$output" ]]; then
+		update_count=0
 		return 0
 	fi
 
-	local aout astat
-	aout=$(timeout $TIMEOUT "$helper" -Quaq)
-	astat=$?
-	# Return only if the exit status is non-zero and there is an error
-	# message
-	if ((${#aout} > 0 && astat != 0)); then
-		is_online=false
-		return 1
-	fi
-	aur=$(grep -cve '^\s*$' <<< "$aout")
-	aur_packages="$aout"
+	update_count=$(echo "$output" | grep -cve '^\s*$')
+	update_packages="$output"
 }
 
 is-dangerous() {
@@ -102,8 +77,8 @@ format-package-list() {
 
 	while IFS= read -r line; do
 		[[ -z "$line" ]] && continue
-		# Extract package name (first field before space)
-		local pkg_name="${line%% *}"
+		# Extract package name
+		local pkg_name="${line##*/}"  # Remove category/
 		if is-dangerous "$pkg_name"; then
 			formatted+="<span color='#f38ba8'>⚠ $line</span>\\n"
 		else
@@ -117,13 +92,14 @@ format-package-list() {
 }
 
 update-packages() {
-	printf '\n%bUpdating pacman packages...%b\n' "$BLU" "$RST"
-	sudo pacman -Syu
+	printf '\n%bSyncing Portage tree...%b\n' "$BLU" "$RST"
+	sudo emerge --sync
 
-	if [[ -n $helper ]]; then
-		printf '\n%bUpdating AUR packages...%b\n' "$BLU" "$RST"
-		"$helper" -Syu
-	fi
+	printf '\n%bUpdating @world...%b\n' "$BLU" "$RST"
+	sudo emerge -avuDN @world
+
+	printf '\n%bCleaning up...%b\n' "$YEL" "$RST"
+	sudo emerge --depclean -a
 
 	notify-send 'Update Complete' -i 'package-install'
 	printf '\n%bUpdate Complete!%b\n' "$GRN" "$RST"
@@ -132,45 +108,34 @@ update-packages() {
 
 display-module() {
 	if [[ $is_online == false ]]; then
-		echo "{ \"text\": \"󰣇\", \"tooltip\": \"Cannot fetch updates\", \"class\": \"offline\" }"
+		echo "{ \"text\": \"󰣨\", \"tooltip\": \"Cannot fetch updates\", \"class\": \"offline\" }"
 		return 0
 	fi
 
-	local total=$((repo + aur))
-	if ((total == 0)); then
-		echo "{ \"text\": \"󰣇\", \"tooltip\": \"No updates available\\n\\n<i>Middle-click for Arch news</i>\", \"class\": \"updated\" }"
+	if ((update_count == 0)); then
+		echo "{ \"text\": \"󰣨\", \"tooltip\": \"No updates available\\n\\n<i>Middle-click for Gentoo news</i>\", \"class\": \"updated\" }"
 		return 0
 	fi
 
-	local tooltip="<b>$total updates available</b>\\n"
-	tooltip+="<i>Middle-click for Arch news</i>\\n\\n"
-
-	if ((repo > 0)); then
-		tooltip+="<b>Official ($repo)</b>:\\n"
-		tooltip+="$(format-package-list "$repo_packages")\\n"
-	fi
-
-	if [[ -n $helper ]] && ((aur > 0)); then
-		tooltip+="\\n<b>AUR/$helper ($aur)</b>:\\n"
-		tooltip+="$(format-package-list "$aur_packages")"
-	fi
+	local tooltip="<b>$update_count updates available</b>\\n"
+	tooltip+="<i>Middle-click for Gentoo news</i>\\n\\n"
+	tooltip+="<b>Packages</b>:\\n"
+	tooltip+="$(format-package-list "$update_packages")"
 
 	# Escape double quotes for JSON
 	tooltip="${tooltip//\"/\\\"}"
 
-	echo "{ \"text\": \"󰣇\", \"tooltip\": \"$tooltip\", \"class\": \"updates-available\" }"
+	echo "{ \"text\": \"󰣨\", \"tooltip\": \"$tooltip\", \"class\": \"updates-available\" }"
 }
 
 main() {
-	detect-helper
-
 	case $1 in
 		'module')
 			check-updates
 			display-module
 			;;
 		*)
-			printf '%bChecking for updates...%b' "$BLU" "$RST"
+			printf '%bChecking for updates...%b\n' "$BLU" "$RST"
 			check-updates
 			update-packages
 			# use signal to update the module
