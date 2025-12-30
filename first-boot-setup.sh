@@ -87,8 +87,6 @@ emerge --ask --verbose \
     media-fonts/dejavu \
     app-misc/fastfetch \
     x11-libs/libnotify \
-#    gui-apps/grim \
-#    gui-apps/slurp \
     app-misc/brightnessctl\
     gui-wm/hyprland-contrib\
     app-shells/fzf\
@@ -119,7 +117,8 @@ emerge --ask --verbose\
     inkscape\
     vscode\
     mpv\
-    pcmanfm-qt
+    pcmanfm-qt\
+    sys-process/btop
 
 # install some AI-stuff
-curl -fsSL https://claude.ai/install.sh | bash
+#curl -fsSL https://claude.ai/install.sh | bash
