@@ -33,6 +33,7 @@ echo "gui-libs/aquamarine ~amd64" >> /etc/portage/package.accept_keywords/hyprla
 echo "dev-libs/hyprland-protocols ~amd64" >> /etc/portage/package.accept_keywords/hyprland
 echo "dev-cpp/sdbus-c++ ~amd64" >> /etc/portage/package.accept_keywords/hyprland
 echo "dev-util/hyprwayland-scanner ~amd64" >> /etc/portage/package.accept_keywords/hyprland
+echo "gui-libs/hyprland-qtutils ~amd64" >> /etc/portage/package.accept_keywords/hyprland
 
 # Unmask GURU specific packages
 echo "gui-apps/awww ~amd64" >> /etc/portage/package.accept_keywords/guru-packages
@@ -45,6 +46,7 @@ echo "x11-themes/kvantum ~amd64" >> /etc/portage/package.accept_keywords/guru-pa
 echo "media-fonts/nerdfonts ~amd64" >> /etc/portage/package.accept_keywords/guru-packages
 
 # USE flag settings for general software
+echo "gui-wm/hyprland qtutils" >> /etc/portage/package.use/hyprland
 echo "media-video/obs-studio pipewire" >> /etc/portage/package.use/obs-studio
 echo "media-video/pipewire dbus sound-server pipewire-alsa" >> /etc/portage/package.use/pipewire
 echo "gui-apps/waybar network pulseaudio tray mpris wifi experimental" >> /etc/portage/package.use/waybar
