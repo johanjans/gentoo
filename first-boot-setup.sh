@@ -38,6 +38,7 @@ echo "gui-apps/hyprshot ~amd64" >> /etc/portage/package.accept_keywords/guru-pac
 echo "sys-auth/hyprpolkitagent ~amd64" >> /etc/portage/package.accept_keywords/guru-packages
 echo "app-misc/brightnessctl ~amd64" >> /etc/portage/package.accept_keywords/guru-packages
 echo "gui-wm/hyprland-contrib ~amd64" >> /etc/portage/package.accept_keywords/guru-packages
+echo "net-im/mattermost-desktop-bin ~amd64" >> /etc/portage/package.accept_keywords/guru-packages
 
 # Install hyprland
 emerge --ask --verbose \
@@ -61,8 +62,24 @@ emerge --ask --verbose \
     gui-apps/grim \
     gui-apps/slurp \
     app-misc/brightnessctl\
-    gui-wm/hyprland-contrib
+    gui-wm/hyprland-contrib\
+    app-shells/fzf
+
+# USE flag settings
+echo "app-dicts/myspell-en l10n_en-US" >> /etc/portage/package.use/myspell-en
+echo "media-libs/babl introspection" >> /etc/portage/package.use/babl
+echo "media-libs/gegl introspection" >> /etc/portage/package.use/gegl
+echo "sys-libs/zlib minizip" >> /etc/portage/package.use/zlib
 
 # install software
-emerge --ask --verbose \
-    neovim \
+emerge --ask --verbose\
+    app-editors/neovim\
+    google-chrome\
+    net-im/mattermost-desktop-bin\
+    gimp\
+    texstudio\
+    texlive\
+    inkscape\
+
+# install some AI-stuff
+curl -fsSL https://claude.ai/install.sh | bash
