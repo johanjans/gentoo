@@ -71,7 +71,8 @@ emerge --ask --verbose \
     app-misc/brightnessctl\
     gui-wm/hyprland-contrib\
     app-shells/fzf\
-    media-sound/pavucontrol
+    media-sound/pavucontrol\
+    gui-libs/xdg-desktop-portal-wlr
 
 # USE flag settings for general software
 echo "app-dicts/myspell-en l10n_en-US" >> /etc/portage/package.use/myspell-en
