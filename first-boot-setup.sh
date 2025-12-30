@@ -22,6 +22,7 @@ echo "gui-libs/xdg-desktop-portal-hyprland ~amd64" >> /etc/portage/package.accep
 echo "gui-apps/hyprlock ~amd64" >> /etc/portage/package.accept_keywords/hyprland
 echo "gui-apps/hypridle ~amd64" >> /etc/portage/package.accept_keywords/hyprland
 echo "gui-apps/hyprpicker ~amd64" >> /etc/portage/package.accept_keywords/hyprland
+echo "gui-apps/hyprsunset ~amd64" >> /etc/portage/package.accept_keywords/hyprland
 echo "media-video/obs-studio ~amd64" >> /etc/portage/package.accept_keywords/hyprland
 
 # Dependencies often pulled in by the above
@@ -55,6 +56,7 @@ emerge --ask --verbose \
     gui-apps/hyprlock \
     gui-apps/hypridle \
     gui-apps/hyprpicker \
+    gui-apps/hyprsunset \
     gui-libs/xdg-desktop-portal-hyprland \
     sys-auth/hyprpolkitagent \
     gui-apps/awww \

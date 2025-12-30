@@ -80,4 +80,4 @@ alias htop='btop'
 alias sudo='doas'
 
 # NEW TERMINAL
-#fastfetch --kitty-direct $HOME/.config/fastfetch/1544x1544_circle.png
+fastfetch --kitty-direct $HOME/.config/fastfetch/1544x1544_circle.png

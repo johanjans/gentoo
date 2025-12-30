@@ -3,8 +3,21 @@
 # Combined system stats module for waybar
 # Shows CPU % with tooltip containing temp, RAM, disk, and GPU usage
 
-# CPU usage
-cpu=$(awk '/^cpu / {usage=100-($5*100/($2+$3+$4+$5+$6+$7+$8))} END {printf "%.0f", usage}' /proc/stat)
+# CPU usage (delta between two samples for accurate current usage)
+read cpu1 <<< $(awk '/^cpu / {print $2+$3+$4+$5+$6+$7+$8+$9+$10+$11, $5}' /proc/stat)
+sleep 0.2
+read cpu2 <<< $(awk '/^cpu / {print $2+$3+$4+$5+$6+$7+$8+$9+$10+$11, $5}' /proc/stat)
+total1=$(echo "$cpu1" | cut -d' ' -f1)
+idle1=$(echo "$cpu1" | cut -d' ' -f2)
+total2=$(echo "$cpu2" | cut -d' ' -f1)
+idle2=$(echo "$cpu2" | cut -d' ' -f2)
+total_delta=$((total2 - total1))
+idle_delta=$((idle2 - idle1))
+if (( total_delta > 0 )); then
+    cpu=$(( 100 * (total_delta - idle_delta) / total_delta ))
+else
+    cpu=0
+fi
 
 # Temperature (thermal zone 1)
 temp=$(cat /sys/class/thermal/thermal_zone1/temp 2>/dev/null)
