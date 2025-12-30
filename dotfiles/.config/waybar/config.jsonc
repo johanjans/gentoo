@@ -43,9 +43,9 @@
 		"return-type": "json",
 		"interval": 3600,
 		"signal": 1,
-		"on-click": "kitty --class floating -e ~/.config/waybar/scripts/system-update.sh",
+		"on-click": "kitty --class floating -e ~/.config/waybar/scripts/power-menu.sh",
 		"on-click-middle": "xdg-open https://www.gentoo.org/news/",
-		"on-click-right": "kitty --class floating -e ~/.config/waybar/scripts/power-menu.sh"
+		"on-click-right": "kitty --class floating -e ~/.config/waybar/scripts/system-update.sh"
 	},
 
 	"hyprland/workspaces": {
