@@ -1,0 +1,37 @@
+/* Catppuccin Mocha dark theme styles for GIMP 3.0 */
+/* Theme specific colors are defined in gimp-dark.css */
+
+@import url("common.css");
+
+/*
+ * Paned separator handles
+ */
+paned.horizontal > separator {
+  background-image: url("ui/separator-handle-v-dark.svg");
+}
+
+paned.vertical > separator {
+  background-image: url("ui/separator-handle-h-dark.svg");
+}
+
+/* Top highlight for buttons */
+button:not(.flat) {
+  box-shadow: 0 1px @extreme-selected-color inset;
+}
+button:not(.flat):hover {
+  box-shadow: none;
+}
+
+/* Define GimpSpinScale slider colors */
+GimpSpinScale entry {
+  background-color: @widget-bg-color;
+}
+
+GimpSpinScale entry progress {
+  background-color: @hover-color;
+}
+
+/* progressbar color */
+progressbar trough progress {
+  background-color: @hover-color;
+}

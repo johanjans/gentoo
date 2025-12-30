@@ -1,0 +1,30 @@
+/* Catppuccin Mocha theme for GIMP 3.0 */
+
+/* Catppuccin Mocha Color Palette */
+@define-color fg-color               rgb(205,214,244);  /* Text */
+@define-color bg-color               rgb(30,30,46);     /* Base */
+@define-color border-color           rgb(17,17,27);     /* Crust */
+
+/* Variants for foreground colors */
+@define-color dimmed-fg-color        rgb(166,173,200);  /* Subtext0 */
+@define-color disabled-fg-color      rgb(127,132,156);  /* Overlay1 */
+@define-color disabled-button-color  rgb(108,112,134);  /* Overlay0 */
+
+/* Variants for background colors */
+@define-color hover-color            rgb(88,91,112);    /* Surface2 */
+@define-color widget-bg-color        rgb(49,50,68);     /* Surface0 */
+@define-color selected-color         rgb(24,24,37);     /* Mantle */
+@define-color extreme-bg-color       rgb(17,17,27);     /* Crust */
+@define-color extreme-selected-color rgb(69,71,90);     /* Surface1 */
+
+/* Variants for border colors */
+@define-color strong-border-color    rgb(49,50,68);     /* Surface0 */
+@define-color stronger-border-color  rgb(69,71,90);     /* Surface1 */
+@define-color edge-border-color      rgb(17,17,27);     /* Crust */
+
+/* Special cases */
+@define-color scrollbar-slider-color rgb(147,153,178);  /* Overlay2 */
+@define-color scrollbar-trough-color rgb(49,50,68);     /* Surface0 */
+@define-color ruler-color            rgba(24,24,37,0.3); /* Mantle */
+
+@import url("common-dark.css");
