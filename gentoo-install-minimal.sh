@@ -184,6 +184,9 @@ mkdir -p /mnt/gentoo/etc/portage/{package.use,package.license,package.accept_key
 # Fix a circular dependency (dracut) and make sure that grub is updated on new kernel install
 echo "sys-kernel/installkernel dracut grub" >> /mnt/gentoo/etc/portage/package.use/installkernel
 
+# PipeWire: enable sound server (replaces PulseAudio) and ALSA integration
+echo "media-video/pipewire dbus sound-server pipewire-alsa" >> /mnt/gentoo/etc/portage/package.use/pipewire
+
 ###############################################################################
 # CHROOT SETUP
 ###############################################################################
@@ -208,6 +211,16 @@ echo "Syncing Portage and setting profile..."
 
 chr "emerge --sync"
 chr "eselect profile set default/linux/amd64/23.0/desktop" || true
+
+###############################################################################
+# CPU FLAGS
+###############################################################################
+
+echo "Detecting CPU flags..."
+
+chr "emerge --oneshot app-portage/cpuid2cpuflags"
+CPU_FLAGS=$(chr "cpuid2cpuflags" | grep -oP 'CPU_FLAGS_X86: \K.*')
+echo "CPU_FLAGS_X86=\"${CPU_FLAGS}\"" >> /mnt/gentoo/etc/portage/make.conf
 
 ###############################################################################
 # USER ACCOUNT

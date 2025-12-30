@@ -41,7 +41,7 @@ main() {
 		'Lock') hyprlock ;;
 		'Shutdown') loginctl poweroff ;;
 		'Reboot') loginctl reboot ;;
-		'Logout') loginctl terminate-session "$XDG_SESSION_ID" ;;
+		'Logout') hyprctl dispatch exit ;;
 		'Hibernate') loginctl hibernate ;;
 		'Suspend') loginctl suspend ;;
 		*) exit 1 ;;
