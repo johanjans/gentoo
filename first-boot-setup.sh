@@ -71,6 +71,7 @@ emerge --ask --verbose \
     gui-apps/hyprpicker \
     gui-apps/hyprsunset \
     gui-libs/xdg-desktop-portal-hyprland \
+    sys-apps/xdg-desktop-portal-gtk \
     sys-auth/hyprpolkitagent \
     gui-apps/awww \
     gui-apps/hyprshot \
@@ -86,14 +87,12 @@ emerge --ask --verbose \
     media-fonts/dejavu \
     app-misc/fastfetch \
     x11-libs/libnotify \
-    gui-apps/grim \
-    gui-apps/slurp \
+#    gui-apps/grim \
+#    gui-apps/slurp \
     app-misc/brightnessctl\
     gui-wm/hyprland-contrib\
     app-shells/fzf\
     media-sound/pavucontrol\
-    gui-libs/xdg-desktop-portal-wlr\
-    sys-apps/xdg-desktop-portal-gtk\
     gui-apps/qt6ct\
     x11-themes/kvantum
 
