@@ -39,7 +39,7 @@ echo "sys-auth/hyprpolkitagent ~amd64" >> /etc/portage/package.accept_keywords/g
 echo "app-misc/brightnessctl ~amd64" >> /etc/portage/package.accept_keywords/guru-packages
 echo "gui-wm/hyprland-contrib ~amd64" >> /etc/portage/package.accept_keywords/guru-packages
 
-# Install things
+# Install hyprland
 emerge --ask --verbose \
     gui-wm/hyprland \
     gui-apps/hyprlock \
@@ -62,3 +62,7 @@ emerge --ask --verbose \
     gui-apps/slurp \
     app-misc/brightnessctl\
     gui-wm/hyprland-contrib
+
+# install software
+emerge --ask --verbose \
+    neovim \
