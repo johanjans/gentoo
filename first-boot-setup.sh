@@ -62,6 +62,7 @@ echo "media-video/pipewire dbus sound-server pipewire-alsa" >> /etc/portage/pack
 echo "gui-apps/waybar network pulseaudio tray mpris wifi experimental" >> /etc/portage/package.use/waybar
 echo "dev-libs/libdbusmenu gtk3" >> /etc/portage/package.use/libdbusmenu
 echo "media-video/ffmpeg opus" >> /etc/portage/package.use/ffmpeg
+echo "media-fonts/nerdfonts jetbrainsmono" >> /etc/portage/package.use/nerdfonts
 
 # Install hyprland
 emerge --ask --verbose \

@@ -33,3 +33,11 @@ tooltip {
 tooltip > box {
 	padding: 0 6px;
 }
+
+/* Calendar tooltip - monospace for alignment */
+#clock tooltip {
+	font-family: monospace;
+}
+#clock tooltip label {
+	font-family: monospace;
+}
