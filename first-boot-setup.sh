@@ -40,6 +40,7 @@ echo "sys-auth/hyprpolkitagent ~amd64" >> /etc/portage/package.accept_keywords/g
 echo "app-misc/brightnessctl ~amd64" >> /etc/portage/package.accept_keywords/guru-packages
 echo "gui-wm/hyprland-contrib ~amd64" >> /etc/portage/package.accept_keywords/guru-packages
 echo "net-im/mattermost-desktop-bin ~amd64" >> /etc/portage/package.accept_keywords/guru-packages
+echo "x11-themes/kvantum ~amd64" >> /etc/portage/package.accept_keywords/guru-packages
 
 # USE flag settings for general software
 echo "media-video/obs-studio pipewire" >> /etc/portage/package.use/obs-studio
@@ -73,7 +74,9 @@ emerge --ask --verbose \
     gui-wm/hyprland-contrib\
     app-shells/fzf\
     media-sound/pavucontrol\
-    gui-libs/xdg-desktop-portal-wlr
+    gui-libs/xdg-desktop-portal-wlr\
+    gui-apps/qt6ct\
+    x11-themes/kvantum
 
 # USE flag settings for general software
 echo "app-dicts/myspell-en l10n_en-US" >> /etc/portage/package.use/myspell-en
