@@ -8,9 +8,7 @@
 		"hyprland/workspaces",
 		"hyprland/window"
 	],
-	"modules-center": [
-		"hyprland/windowcount"
-	],
+	"modules-center": [],
 	"modules-right": [
 		"custom/mpris",
 		"custom/dnd",
@@ -46,7 +44,7 @@
 		"interval": 3600,
 		"signal": 1,
 		"on-click": "kitty --class floating -e ~/.config/waybar/scripts/system-update.sh",
-		"on-click-middle": "xdg-open https://archlinux.org/news/",
+		"on-click-middle": "xdg-open https://www.gentoo.org/news/",
 		"on-click-right": "kitty --class floating -e ~/.config/waybar/scripts/power-menu.sh"
 	},
 
@@ -68,10 +66,6 @@
 		"swap-icon-label": false
 	},
 
-	"hyprland/windowcount": {
-		"format": "[{}]",
-		"swap-icon-label": false
-	},
 
 	"custom/system-stats": {
 		"exec": "~/.config/waybar/scripts/system-stats.sh",

@@ -22,6 +22,7 @@ echo "gui-libs/xdg-desktop-portal-hyprland ~amd64" >> /etc/portage/package.accep
 echo "gui-apps/hyprlock ~amd64" >> /etc/portage/package.accept_keywords/hyprland
 echo "gui-apps/hypridle ~amd64" >> /etc/portage/package.accept_keywords/hyprland
 echo "gui-apps/hyprpicker ~amd64" >> /etc/portage/package.accept_keywords/hyprland
+echo "media-video/obs-studio ~amd64" >> /etc/portage/package.accept_keywords/hyprland
 
 # Dependencies often pulled in by the above
 echo "gui-libs/hyprutils ~amd64" >> /etc/portage/package.accept_keywords/hyprland
@@ -40,7 +41,9 @@ echo "app-misc/brightnessctl ~amd64" >> /etc/portage/package.accept_keywords/gur
 echo "gui-wm/hyprland-contrib ~amd64" >> /etc/portage/package.accept_keywords/guru-packages
 echo "net-im/mattermost-desktop-bin ~amd64" >> /etc/portage/package.accept_keywords/guru-packages
 
-# USE flag settings for hyprland
+# USE flag settings for general software
+echo "media-video/obs-studio pipewire" >> /etc/portage/package.use/obs-studio
+echo "media-video/pipewire dbus" >> /etc/portage/package.use/pipewire
 echo "gui-apps/waybar network pulseaudio tray mpris wifi experimental" >> /etc/portage/package.use/waybar
 echo "dev-libs/libdbusmenu gtk3" >> /etc/portage/package.use/libdbusmenu
 
@@ -86,6 +89,7 @@ emerge --ask --verbose\
     texstudio\
     texlive\
     inkscape\
+    vscode\
 
 # install some AI-stuff
 curl -fsSL https://claude.ai/install.sh | bash
