@@ -11,6 +11,7 @@ export PATH="$HOME/.local/bin:$PATH"
 
 # SETUP
 export EDITOR="nvim"
+export ICAROOT="/opt/Citrix/ICAClient"
 export TERM="xterm-256color"
 export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'    # GCC warnings and errors colorized
 export MANPAGER="nvim +Man!"                                                              # neovim as manpager
