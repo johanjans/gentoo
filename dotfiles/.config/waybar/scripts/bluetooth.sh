@@ -132,7 +132,9 @@ pair-and-connect() {
 	# Restart audio pipeline to ensure bluetooth audio works
 	printf '\nInitializing audio...'
 	sleep 1
-	systemctl --user restart pipewire pipewire-pulse wireplumber
+	pkill -u "$USER" -x wireplumber; pkill -u "$USER" -x pipewire-pulse; pkill -u "$USER" -x pipewire
+	sleep 1
+	pipewire & pipewire-pulse & wireplumber &
 	sleep 2
 
 	notify-send 'Bluetooth' 'Successfully connected' -i 'package-install'

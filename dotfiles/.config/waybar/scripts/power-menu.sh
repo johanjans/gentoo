@@ -39,11 +39,11 @@ main() {
 	selected=$(printf '%s\n' "${list[@]}" | fzf "${opts[@]}")
 	case $selected in
 		'Lock') hyprlock ;;
-		'Shutdown') systemctl poweroff ;;
-		'Reboot') systemctl reboot ;;
+		'Shutdown') loginctl poweroff ;;
+		'Reboot') loginctl reboot ;;
 		'Logout') loginctl terminate-session "$XDG_SESSION_ID" ;;
-		'Hibernate') systemctl hibernate ;;
-		'Suspend') systemctl suspend ;;
+		'Hibernate') loginctl hibernate ;;
+		'Suspend') loginctl suspend ;;
 		*) exit 1 ;;
 	esac
 }

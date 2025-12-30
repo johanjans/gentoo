@@ -93,13 +93,13 @@ format-package-list() {
 
 update-packages() {
 	printf '\n%bSyncing Portage tree...%b\n' "$BLU" "$RST"
-	sudo emerge --sync
+	doas emerge --sync
 
 	printf '\n%bUpdating @world...%b\n' "$BLU" "$RST"
-	sudo emerge -avuDN @world
+	doas emerge -avuDN @world
 
 	printf '\n%bCleaning up...%b\n' "$YEL" "$RST"
-	sudo emerge --depclean -a
+	doas emerge --depclean -a
 
 	notify-send 'Update Complete' -i 'package-install'
 	printf '\n%bUpdate Complete!%b\n' "$GRN" "$RST"
