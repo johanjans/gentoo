@@ -40,6 +40,9 @@ echo "app-misc/brightnessctl ~amd64" >> /etc/portage/package.accept_keywords/gur
 echo "gui-wm/hyprland-contrib ~amd64" >> /etc/portage/package.accept_keywords/guru-packages
 echo "net-im/mattermost-desktop-bin ~amd64" >> /etc/portage/package.accept_keywords/guru-packages
 
+# USE flag settings for hyprland
+echo "gui-apps/waybar network pulseaudio tray mpris wifi experimental" >> /etc/portage/package.use/waybar
+
 # Install hyprland
 emerge --ask --verbose \
     gui-wm/hyprland \
@@ -66,13 +69,13 @@ emerge --ask --verbose \
     app-shells/fzf\
     media-sound/pavucontrol
 
-# USE flag settings
+# USE flag settings for general software
 echo "app-dicts/myspell-en l10n_en-US" >> /etc/portage/package.use/myspell-en
 echo "media-libs/babl introspection" >> /etc/portage/package.use/babl
 echo "media-libs/gegl introspection" >> /etc/portage/package.use/gegl
 echo "sys-libs/zlib minizip" >> /etc/portage/package.use/zlib
 
-# install software
+# install general software
 emerge --ask --verbose\
     app-editors/neovim\
     google-chrome\
