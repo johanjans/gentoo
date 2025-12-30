@@ -42,6 +42,7 @@ echo "app-misc/brightnessctl ~amd64" >> /etc/portage/package.accept_keywords/gur
 echo "gui-wm/hyprland-contrib ~amd64" >> /etc/portage/package.accept_keywords/guru-packages
 echo "net-im/mattermost-desktop-bin ~amd64" >> /etc/portage/package.accept_keywords/guru-packages
 echo "x11-themes/kvantum ~amd64" >> /etc/portage/package.accept_keywords/guru-packages
+echo "media-fonts/nerdfonts ~amd64" >> /etc/portage/package.accept_keywords/guru-packages
 
 # USE flag settings for general software
 echo "media-video/obs-studio pipewire" >> /etc/portage/package.use/obs-studio
@@ -67,6 +68,7 @@ emerge --ask --verbose \
     gui-apps/mako \
     gui-apps/wofi \
     media-fonts/symbols-nerd-font \
+    media-fonts/nerdfonts \
     media-fonts/noto \
     app-misc/fastfetch \
     x11-libs/libnotify \
@@ -77,8 +79,14 @@ emerge --ask --verbose \
     app-shells/fzf\
     media-sound/pavucontrol\
     gui-libs/xdg-desktop-portal-wlr\
+    sys-apps/xdg-desktop-portal-gtk\
     gui-apps/qt6ct\
     x11-themes/kvantum
+
+# Configure fontconfig for proper font rendering (Arch-style)
+rm -f /etc/fonts/conf.d/10-sub-pixel-none.conf
+ln -sf ../conf.avail/10-sub-pixel-rgb.conf /etc/fonts/conf.d/
+fc-cache -fv
 
 # USE flag settings for general software
 echo "app-dicts/myspell-en l10n_en-US" >> /etc/portage/package.use/myspell-en
