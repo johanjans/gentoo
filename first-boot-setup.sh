@@ -119,7 +119,8 @@ emerge --ask --verbose\
     mpv\
     pcmanfm-qt\
     sys-process/btop\
-    obs-studio
+    obs-studio\
+    media-gfx/imv
 
 # install some AI-stuff
 #curl -fsSL https://claude.ai/install.sh | bash
