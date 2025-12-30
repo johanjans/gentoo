@@ -3,6 +3,16 @@
 # Initial setup
 # nmcli device wifi connect uplink --ask
 # nmcli device wifi set wlp0s20f3 autoconnect yes
+
+# Update mirror URL
+cat > /etc/portage/repos.conf/gentoo.conf << 'EOF'
+[gentoo]
+location = /var/db/repos/gentoo
+sync-type = rsync
+sync-uri = rsync://rsync.se.gentoo.org/gentoo-portage/
+auto-sync = yes
+EOF
+
 # emerge @world
 
 # Enable GURU
