@@ -74,6 +74,7 @@ echo "app-dicts/myspell-en l10n_en-US" >> /etc/portage/package.use/myspell-en
 echo "media-libs/babl introspection" >> /etc/portage/package.use/babl
 echo "media-libs/gegl introspection" >> /etc/portage/package.use/gegl
 echo "sys-libs/zlib minizip" >> /etc/portage/package.use/zlib
+echo "media-plugins/alsa-plugins pulseaudio" >> /etc/portage/package.use/alsa-plugins
 
 # install general software
 emerge --ask --verbose\
