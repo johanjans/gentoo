@@ -11,6 +11,7 @@
 	"modules-center": [],
 	"modules-right": [
 		"custom/mpris",
+		"custom/display-mode",
 		"custom/dnd",
 		"idle_inhibitor",
 		"custom/system-stats",
@@ -82,6 +83,14 @@
 		"signal": 2
 	},
 
+	"custom/display-mode": {
+		"exec": "~/.config/waybar/scripts/display-mode.sh",
+		"return-type": "json",
+		"interval": 5,
+		"on-click": "~/.config/waybar/scripts/display-mode.sh toggle; pkill -RTMIN+3 waybar",
+		"signal": 3
+	},
+
 	"idle_inhibitor": {
 		"format": "{icon} ",
 		"format-icons": {
@@ -93,8 +102,8 @@
 	},
 
 	"clock": {
-		"format": "{:%H:%M · %d/%m · v%V}",
-		"tooltip": false,
+		"format": "{:%H:%M}",
+		"tooltip-format": "{:%d/%m · v%V}",
 		"locale": "sv_SE.utf8"
 	},
 

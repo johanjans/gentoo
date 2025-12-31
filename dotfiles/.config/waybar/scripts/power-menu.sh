@@ -35,11 +35,9 @@ confirm() {
 
 main() {
 	local list=(
-		'Lock'
-		'Shutdown'
 		'Reboot'
+		'Shutdown'
 		'Logout'
-		'Hibernate'
 		'Suspend'
 	)
 	local opts=(
@@ -56,11 +54,9 @@ main() {
 	local selected
 	selected=$(printf '%s\n' "${list[@]}" | fzf "${opts[@]}")
 	case $selected in
-		'Lock') hyprlock ;;
 		'Shutdown') confirm 'Shutdown' && loginctl poweroff ;;
 		'Reboot') confirm 'Reboot' && loginctl reboot ;;
-		'Logout') hyprctl dispatch exit ;;
-		'Hibernate') loginctl hibernate ;;
+		'Logout') confirm 'Logout' && hyprctl dispatch exit ;;
 		'Suspend') loginctl suspend ;;
 		*) exit 1 ;;
 	esac
