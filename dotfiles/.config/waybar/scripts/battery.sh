@@ -97,11 +97,11 @@ else
 fi
 
 # Build tooltip with battery info first, then system stats
-tooltip="󰁹 Battery: ${capacity}% (${status})"
+tooltip="🔋 Battery: ${capacity}% (${status})"
 if [[ -n "$time_info" ]]; then
-    tooltip="${tooltip}\n󱧥 Time: ${time_info}"
+    tooltip="${tooltip}\n⏱️ Time: ${time_info}"
 fi
-tooltip="${tooltip}\n\n󰍛 CPU: ${cpu}%\n󰔏 Temperature: ${temp}°C\n󰢮 GPU: ${gpu_usage}\n󰯍 Swap: ${swap_used}/${swap_total_mb} MB (${swap_percent}%)\n󰘚 Memory: ${mem_used}/${mem_total_mb} MB (${mem_percent}%)\n󰋊 Disk: ${disk_used}/${disk_total} (${disk_percent}%)"
+tooltip="${tooltip}\n\n🖥️ CPU: ${cpu}%\n🌡️ Temperature: ${temp}°C\n🎮 GPU: ${gpu_usage}\n💾 Swap: ${swap_used}/${swap_total_mb} MB (${swap_percent}%)\n🧠 Memory: ${mem_used}/${mem_total_mb} MB (${mem_percent}%)\n💿 Disk: ${disk_used}/${disk_total} (${disk_percent}%)"
 
 # Determine class based on battery level
 class=""

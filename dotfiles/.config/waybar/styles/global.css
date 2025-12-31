@@ -28,7 +28,7 @@ button:hover {
 tooltip {
 	border: 2px solid @main-br;
 	border-radius: 10px;
-	background-color: @main-bg;
+	background-color: alpha(@main-bg, 0.85);
 }
 tooltip > box {
 	padding: 0 6px;

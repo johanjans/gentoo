@@ -63,7 +63,7 @@ if [ ${#display} -gt 40 ]; then
 fi
 
 text="$icon $display"
-tooltip="$player: $artist - $title"
+tooltip="🎵 $player: $artist - $title"
 class=$(echo "$status" | tr '[:upper:]' '[:lower:]')
 
 printf '{"text": "%s", "tooltip": "%s", "class": "%s"}\n' "$text" "$tooltip" "$class"

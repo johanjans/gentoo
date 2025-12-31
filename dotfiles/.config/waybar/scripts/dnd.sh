@@ -4,9 +4,9 @@
 
 get_status() {
     if makoctl mode | grep -q "do-not-disturb"; then
-        echo '{"text": "󰂛", "tooltip": "toggle all notifications on/off", "class": "active"}'
+        echo '{"text": "󰂛", "tooltip": "🔕 Notifications: OFF\n\n  Click to enable", "class": "active"}'
     else
-        echo '{"text": "󰂚", "tooltip": "toggle all notifications on/off", "class": "inactive"}'
+        echo '{"text": "󰂚", "tooltip": "🔔 Notifications: ON\n\n  Click to disable", "class": "inactive"}'
     fi
 }
 

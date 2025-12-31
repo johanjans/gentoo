@@ -43,7 +43,7 @@ check-updates() {
 
 	# Use eix to check for upgradable packages (fast, uses cached database)
 	local output
-	output=$(eix -u --format '<category>/<name>\n' 2>/dev/null)
+	output=$(eix -u --format '<category>/<name>\n' 2>/dev/null | grep -v '^Found [0-9]* match')
 
 	if [[ -z "$output" ]]; then
 		update_count=0
@@ -102,44 +102,60 @@ update-packages() {
 
 shortcuts-header() {
 	cat <<'SHORTCUTS'
-🖱️ <b>MOUSE ACTIONS</b>
-  LMB  Power Menu
-  MMB  Gentoo News
-  RMB  System Update
-
-━━━━━━━━━━━━━━━━━━━━━━━━━
+🖱️ LMB Power Menu  MMB Gentoo News  RMB Update
 
 🚀 <b>APPS</b>
-  Super + Q  Terminal
-  Super + E  File Manager
-  Super + R  App Launcher
-  Super + B  Browser
+  Super + Q  Terminal (kitty)
+  Super + E  File Manager (pcmanfm-qt)
+  Super + R  App Launcher (wofi)
+  Super + B  Browser (Chrome)
   Super + L  Lock Screen
 
 🪟 <b>WINDOWS</b>
-  Super + C  Close Window
-  Super + V  Toggle Float
-  Super + F  Fullscreen
-  Super + J  Toggle Split
-  Alt + Tab  Cycle Windows
+  Super + C       Close Window
+  Super + V       Toggle Float
+  Super + F       Fullscreen
+  Super + P       Pseudo-tile
+  Super + J       Toggle Split
+  Super + Arrows  Move Focus
+  Alt + Tab       Cycle Windows
 
 🖥️ <b>WORKSPACES</b>
-  Super + 1-0        Switch
-  Super + Shift 1-0  Move Window
+  Super + 1-0        Switch WS
+  Super + Shift 1-0  Move to WS
   Super + S          Special WS
-  Super + Scroll     Prev/Next
+  Super + Shift S    Move to Special
+  Super + Scroll     Prev/Next WS
 
 🖱️ <b>MOUSE (+ Super)</b>
   LMB  Move Window
   RMB  Resize Window
 
+👆 <b>GESTURES</b>
+  3-finger Swipe  Switch WS
+
 📸 <b>SCREENSHOT</b>
-  Print        Clipboard
-  Shift Print  Save File
+  Print        Copy to Clipboard
+  Shift Print  Save to ~/Pictures
 
 📋 <b>CLIPBOARD</b>
-  Ctrl Super V  History
+  Super Ctrl V  Clipboard History
 SHORTCUTS
+}
+
+count-package-types() {
+	selected_count=0
+	dependency_count=0
+
+	while IFS= read -r line; do
+		[[ -z "$line" ]] && continue
+		local pkg_name="${line##*/}"
+		if is-dangerous "$pkg_name"; then
+			((selected_count++))
+		else
+			((dependency_count++))
+		fi
+	done <<< "$update_packages"
 }
 
 display-module() {
@@ -156,10 +172,21 @@ display-module() {
 		return 0
 	fi
 
-	local tooltip="$header\\n\\n"
-	tooltip+="━━━━━━━━━━━━━━━━━━━━━━━━━\\n\\n"
-	tooltip+="📦 <b>$update_count UPDATES AVAILABLE</b>\\n"
-	tooltip+="$(format-package-list "$update_packages")"
+	# Count selected vs dependency packages
+	count-package-types
+
+	local tooltip="📦 $update_count updates"
+	if ((selected_count > 0)); then
+		tooltip+=" (⚠️ $selected_count selected"
+		if ((dependency_count > 0)); then
+			tooltip+=", $dependency_count deps"
+		fi
+		tooltip+=")"
+	elif ((dependency_count > 0)); then
+		tooltip+=" ($dependency_count deps)"
+	fi
+	tooltip+="\\n\\n"
+	tooltip+="$header"
 
 	# Escape double quotes for JSON
 	tooltip="${tooltip//\"/\\\"}"

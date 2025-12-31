@@ -41,7 +41,7 @@
 	"custom/distro": {
 		"exec": "~/.config/waybar/scripts/system-update.sh module",
 		"return-type": "json",
-		"interval": 3600,
+		"interval": 300,
 		"signal": 1,
 		"on-click": "kitty --class floating -e ~/.config/waybar/scripts/power-menu.sh",
 		"on-click-middle": "xdg-open https://www.gentoo.org/news/",
@@ -89,8 +89,8 @@
 			"activated": "󰈈",
 			"deactivated": "󰈉"
 		},
-		"tooltip-format-activated": "Screen can not sleep",
-		"tooltip-format-deactivated": "Screen can sleep"
+		"tooltip-format-activated": "☕ Caffeine: ON\n\n  Screen will not sleep",
+		"tooltip-format-deactivated": "😴 Caffeine: OFF\n\n  Screen can sleep"
 	},
 
 	"clock": {
@@ -107,7 +107,7 @@
 			"headphone": "󰋋",
 			"headset": "󰋎"
 		},
-		"tooltip-format": "󰓃 Output: {desc}\n󰍬 Input: {source_desc}",
+		"tooltip-format": "🔊 Audio\n\n  🎧 Output: {desc}\n  🎤 Input: {source_desc}",
 		"on-click": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle",
 		"on-click-right": "pavucontrol"
 	},
@@ -119,8 +119,8 @@
 		"format-disconnected": "󰤯",
 		"format-disabled": "󰤮",
 		"format-icons": ["󰤟", "󰤢", "󰤥", "󰤨"],
-		"tooltip-format-wifi": "<b>Network</b>: {essid}\n<b>IP</b>: {ipaddr}/{cidr}\n<b>Strength</b>: {signalStrength}%",
-		"tooltip-format-disconnected": "Wi-Fi Disconnected",
+		"tooltip-format-wifi": "📶 <b>Network</b>\n\n  🌐 SSID: {essid}\n  🏠 IP: {ipaddr}/{cidr}\n  📊 Strength: {signalStrength}%",
+		"tooltip-format-disconnected": "📵 Wi-Fi Disconnected",
 		"on-click": "kitty --class floating -e ~/.config/waybar/scripts/network.sh"
 	},
 
@@ -128,9 +128,9 @@
 		"format-off": "󰂲 off",
 		"format-on": "󰂯 on",
 		"format-connected": "󰂱 on ({num_connections})",
-		"tooltip-format-on": "Bluetooth On (no devices connected)",
-		"tooltip-format-connected": "{num_connections} device(s) connected:\n{device_enumerate}",
-		"tooltip-format-enumerate-connected": "  • {device_alias}",
+		"tooltip-format-on": "🔵 Bluetooth: ON\n\n  No devices connected",
+		"tooltip-format-connected": "🔵 Bluetooth: ON\n\n  {num_connections} device(s) connected:\n{device_enumerate}",
+		"tooltip-format-enumerate-connected": "  🎧 {device_alias}",
 		"on-click": "kitty --class floating -e ~/.config/waybar/scripts/bluetooth.sh",
 		"on-click-right": "kitty --class floating -e ~/.config/waybar/scripts/bluetooth.sh disconnect"
 	},

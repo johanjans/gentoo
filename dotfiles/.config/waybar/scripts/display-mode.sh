@@ -13,7 +13,7 @@ case "$1" in
         ;;
     *)
         if [[ -n "$(get_external)" ]]; then
-            echo '{"text": "󰍹", "tooltip": "Mirror display"}'
+            echo '{"text": "󰍹", "tooltip": "🖥️ Mirror display\n\n  Click to mirror to external"}'
         else
             echo '{"text": "", "class": "hidden"}'
         fi
