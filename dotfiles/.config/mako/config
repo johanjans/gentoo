@@ -16,7 +16,7 @@ group-by=category
 
 # Colors
 
-background-color=#1e1e2e
+background-color=#1e1e2e70
 text-color=#cdd6f4
 border-color=#f5c2e7
 progress-color=over #313244
