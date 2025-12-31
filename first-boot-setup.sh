@@ -72,7 +72,6 @@ emerge --ask --verbose \
     gui-apps/hyprpicker \
     gui-apps/hyprsunset \
     gui-libs/xdg-desktop-portal-hyprland \
-    sys-apps/xdg-desktop-portal-gtk \
     sys-auth/hyprpolkitagent \
     gui-apps/awww \
     gui-apps/hyprshot \

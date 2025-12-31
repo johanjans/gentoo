@@ -10,19 +10,24 @@ default-timeout=5000
 ignore-timeout=1
 font=monospace 10
 
+# Catppuccin Mocha
+background-color=#1e1e2e80
+text-color=#cdd6f4
+border-color=#cba6f7
+progress-color=over #313244
+
 [category=mpd]
 default-timeout=2000
 group-by=category
 
-# Colors
+[urgency=low]
+border-color=#a6e3a1
 
-background-color=#1e1e2e70
-text-color=#cdd6f4
-border-color=#f5c2e7
-progress-color=over #313244
+[urgency=normal]
+border-color=#cba6f7
 
 [urgency=high]
-border-color=#fab387
+border-color=#f38ba8
 
 [mode=do-not-disturb]
 invisible=1
