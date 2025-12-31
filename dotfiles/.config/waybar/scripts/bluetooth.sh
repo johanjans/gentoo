@@ -112,31 +112,29 @@ select-device() {
 }
 
 pair-and-connect() {
-	local paired
-	paired=$(bluetoothctl info "$address" | awk '/Paired/ {print $2}')
-	if [[ $paired == 'no' ]]; then
-		printf 'Pairing...'
-		if ! timeout $TIMEOUT bluetoothctl pair "$address" > /dev/null; then
-			notify-send 'Bluetooth' 'Failed to pair' -i 'package-purge'
-			return 1
-		fi
-		printf '\nTrusting...'
-		bluetoothctl trust "$address" > /dev/null
+	# Always remove and re-pair fresh to avoid stale pairing key issues
+	printf 'Removing old pairing...'
+	bluetoothctl remove "$address" &>/dev/null
+
+	# Rescan to rediscover the device after removal
+	printf '\nRediscovering device...'
+	bluetoothctl --timeout 5 scan on &>/dev/null &
+	sleep 3
+
+	printf '\nPairing...'
+	if ! timeout $TIMEOUT bluetoothctl pair "$address" > /dev/null; then
+		notify-send 'Bluetooth' 'Failed to pair' -i 'package-purge'
+		return 1
 	fi
+
+	printf '\nTrusting...'
+	bluetoothctl trust "$address" > /dev/null
 
 	printf '\nConnecting...'
 	if ! timeout $TIMEOUT bluetoothctl connect "$address" > /dev/null; then
 		notify-send 'Bluetooth' 'Failed to connect' -i 'package-purge'
 		return 1
 	fi
-
-	# Restart audio pipeline to ensure bluetooth audio works
-	printf '\nInitializing audio...'
-	sleep 1
-	pkill -u "$USER" -x wireplumber; pkill -u "$USER" -x pipewire-pulse; pkill -u "$USER" -x pipewire
-	sleep 1
-	pipewire & pipewire-pulse & wireplumber &
-	sleep 2
 
 	notify-send 'Bluetooth' 'Successfully connected' -i 'package-install'
 }
