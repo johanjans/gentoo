@@ -54,6 +54,16 @@ ensure-on() {
 	notify-send 'Bluetooth On' -i 'network-bluetooth-activated' -h string:x-canonical-private-synchronous:bluetooth
 }
 
+resolve-device-name() {
+	local addr=$1 fallback=$2
+	local name
+	# Try to get the resolved name from device info cache
+	name=$(bluetoothctl info "$addr" 2>/dev/null | awk -F': ' '/^\s*Name:/ {print $2; exit}')
+	# Fall back to Alias if Name isn't set
+	[[ -z $name ]] && name=$(bluetoothctl info "$addr" 2>/dev/null | awk -F': ' '/^\s*Alias:/ {print $2; exit}')
+	printf '%s' "${name:-$fallback}"
+}
+
 get-device-list() {
 	bluetoothctl --timeout $TIMEOUT scan on > /dev/null &
 
@@ -73,8 +83,14 @@ get-device-list() {
 	done
 	printf '\n%bScanning stopped.%b\n\n' "$RED" "$RST"
 
-	# Strip ANSI color codes and remove 'Device ' prefix
-	list=$(bluetoothctl devices | sed 's/\x1b\[[0-9;]*m//g; s/^Device //')
+	# Build device list with resolved names
+	list=""
+	while read -r _ addr name; do
+		resolved=$(resolve-device-name "$addr" "$name")
+		list+="$addr $resolved"$'\n'
+	done < <(bluetoothctl devices | sed 's/\x1b\[[0-9;]*m//g')
+	list=${list%$'\n'}
+
 	if [[ -z $list ]]; then
 		notify-send 'Bluetooth' 'No devices found' -i 'package-broken'
 		return 1

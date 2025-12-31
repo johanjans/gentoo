@@ -41,15 +41,9 @@ check-updates() {
 	update_count=0
 	update_packages=""
 
-	# Sync portage tree quietly and check for updates
-	if ! emerge --sync -q &>/dev/null; then
-		# If sync fails, try to use cached data
-		:
-	fi
-
-	# Use emerge -puDN @world to check for updates
+	# Use eix to check for upgradable packages (fast, uses cached database)
 	local output
-	output=$(emerge -puDN @world 2>/dev/null | grep -E "^\[ebuild" | sed 's/\[ebuild[^]]*\] //' | cut -d' ' -f1)
+	output=$(eix -u --format '<category>/<name>\n' 2>/dev/null)
 
 	if [[ -z "$output" ]]; then
 		update_count=0
@@ -93,7 +87,7 @@ format-package-list() {
 
 update-packages() {
 	printf '\n%bSyncing Portage tree...%b\n' "$BLU" "$RST"
-	doas emerge --sync
+	doas eix-sync
 
 	printf '\n%bUpdating @world...%b\n' "$BLU" "$RST"
 	doas emerge -avuDN @world
@@ -106,20 +100,65 @@ update-packages() {
 	read -rs -n 1 -p 'Press any key to exit...'
 }
 
+shortcuts-header() {
+	cat <<'SHORTCUTS'
+🖱️ <b>MOUSE ACTIONS</b>
+  LMB  Power Menu
+  MMB  Gentoo News
+  RMB  System Update
+
+━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🚀 <b>APPS</b>
+  Super + Q  Terminal
+  Super + E  File Manager
+  Super + R  App Launcher
+  Super + B  Browser
+  Super + L  Lock Screen
+
+🪟 <b>WINDOWS</b>
+  Super + C  Close Window
+  Super + V  Toggle Float
+  Super + F  Fullscreen
+  Super + J  Toggle Split
+  Alt + Tab  Cycle Windows
+
+🖥️ <b>WORKSPACES</b>
+  Super + 1-0        Switch
+  Super + Shift 1-0  Move Window
+  Super + S          Special WS
+  Super + Scroll     Prev/Next
+
+🖱️ <b>MOUSE (+ Super)</b>
+  LMB  Move Window
+  RMB  Resize Window
+
+📸 <b>SCREENSHOT</b>
+  Print        Clipboard
+  Shift Print  Save File
+
+📋 <b>CLIPBOARD</b>
+  Ctrl Super V  History
+SHORTCUTS
+}
+
 display-module() {
+	local header
+	header=$(shortcuts-header | sed ':a;N;$!ba;s/\n/\\n/g')
+
 	if [[ $is_online == false ]]; then
-		echo "{ \"text\": \"󰣨\", \"tooltip\": \"Cannot fetch updates\", \"class\": \"offline\" }"
+		echo "{ \"text\": \"󰣨\", \"tooltip\": \"$header\", \"class\": \"offline\" }"
 		return 0
 	fi
 
 	if ((update_count == 0)); then
-		echo "{ \"text\": \"󰣨\", \"tooltip\": \"No updates available\\n\\n<i>Middle-click for Gentoo news</i>\", \"class\": \"updated\" }"
+		echo "{ \"text\": \"󰣨\", \"tooltip\": \"$header\", \"class\": \"updated\" }"
 		return 0
 	fi
 
-	local tooltip="<b>$update_count updates available</b>\\n"
-	tooltip+="<i>Middle-click for Gentoo news</i>\\n\\n"
-	tooltip+="<b>Packages</b>:\\n"
+	local tooltip="$header\\n\\n"
+	tooltip+="━━━━━━━━━━━━━━━━━━━━━━━━━\\n\\n"
+	tooltip+="📦 <b>$update_count UPDATES AVAILABLE</b>\\n"
 	tooltip+="$(format-package-list "$update_packages")"
 
 	# Escape double quotes for JSON

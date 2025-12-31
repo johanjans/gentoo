@@ -20,13 +20,14 @@
 window {
     margin: 0px;
     padding: 10px;
-    border-radius: 10px; /* Slight rounding for modern look */
-    
-    /* Semi-transparent dark background. 
+    border-radius: 10px; /* Matches Hyprland decoration rounding */
+    border: 3px solid @mauve; /* Matches Hyprland border_size */
+
+    /* Semi-transparent dark background.
        Adjust the last number (0.85) to change opacity:
-       0.0 = invisible, 1.0 = solid block 
+       0.0 = invisible, 1.0 = solid block
     */
-    background-color: rgba(30, 30, 46, 0.85); 
+    background-color: rgba(30, 30, 46, 0.85);
 }
 
 #inner-box {

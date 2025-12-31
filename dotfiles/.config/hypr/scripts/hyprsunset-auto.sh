@@ -33,6 +33,9 @@ case "$1" in
             sleep 900  # Check every 15 minutes
         done
         ;;
+    --get-temp)
+        get_temperature
+        ;;
     *)
         set_temperature
         ;;

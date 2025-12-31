@@ -92,7 +92,11 @@ emerge --ask --verbose \
     app-shells/fzf\
     media-sound/pavucontrol\
     gui-apps/qt6ct\
-    x11-themes/kvantum
+    x11-themes/kvantum\
+    app-portage/eix
+
+# Build eix database
+eix-update
 
 # Configure fontconfig for proper font rendering (Arch-style)
 rm -f /etc/fonts/conf.d/10-sub-pixel-none.conf

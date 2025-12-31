@@ -14,11 +14,10 @@
 		"custom/display-mode",
 		"custom/dnd",
 		"idle_inhibitor",
-		"custom/system-stats",
 		"bluetooth",
 		"network",
 		"pulseaudio",
-		"battery",
+		"custom/battery",
 		"tray",
 		"clock"
 	],
@@ -68,13 +67,6 @@
 	},
 
 
-	"custom/system-stats": {
-		"exec": "~/.config/waybar/scripts/system-stats.sh",
-		"return-type": "json",
-		"interval": 5,
-		"on-click": "kitty --class floating -e btop"
-	},
-
 	"custom/dnd": {
 		"exec": "~/.config/waybar/scripts/dnd.sh",
 		"return-type": "json",
@@ -87,7 +79,7 @@
 		"exec": "~/.config/waybar/scripts/display-mode.sh",
 		"return-type": "json",
 		"interval": 5,
-		"on-click": "~/.config/waybar/scripts/display-mode.sh toggle; pkill -RTMIN+3 waybar",
+		"on-click": "~/.config/waybar/scripts/display-mode.sh mirror",
 		"signal": 3
 	},
 
@@ -103,7 +95,7 @@
 
 	"clock": {
 		"format": "{:%H:%M}",
-		"tooltip-format": "{:%d/%m · v%V}",
+		"tooltip-format": "{:%A %d %B %Y  (v%V)}\n\n━━━ 🎓 JTH Academic Year 2026 ━━━\n\n🌸 SPRING (Jan 18 – Jun 6)\n  📚 SP 3       Jan 18 – Mar 12  (v3-10)\n  🔄 Re-exam    Feb 13 – 21      (v7, SP 2)\n  📝 Exam 3     Mar 13 – 21      (v11)\n  📚 SP 4       Mar 22 – May 21  (v12-20)\n  📝 Exam 4     May 22 – 30      (v21)\n  🔄 Re-exam    May 31 – Jun 9   (v22-23, SP 1-3)\n  🎓 Graduation Jun 4\n\n🍂 AUTUMN (Aug 31 – Jan 17)\n  🔄 Re-exam    Aug 17 – 23      (v34, SP 3-4)\n  👋 Intro      Aug 24 – 30      (v35)\n  📚 SP 1       Aug 31 – Oct 16  (v36-42)\n  📝 Exam 1     Oct 17 – 25      (v43)\n  📚 SP 2       Oct 26 – Dec 11  (v44-50)\n  📝 Exam 2     Dec 12 – 20      (v51)\n  🔄 Re-exam    Jan 11 – 17      (v2, SP 1+4)",
 		"locale": "sv_SE.utf8"
 	},
 
@@ -115,7 +107,7 @@
 			"headphone": "󰋋",
 			"headset": "󰋎"
 		},
-		"tooltip-format": "Output: {desc}",
+		"tooltip-format": "󰓃 Output: {desc}\n󰍬 Input: {source_desc}",
 		"on-click": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle",
 		"on-click-right": "pavucontrol"
 	},
@@ -152,16 +144,11 @@
 		"on-scroll-down": "playerctl previous"
 	},
 
-	"battery": {
-		"states": {
-			"warning": 20,
-			"critical": 10
-		},
-		"format": "{icon} {capacity}%",
-		"format-charging": "󰉁 {capacity}%",
-		"format-icons": ["󰂎", "󰁻", "󰁼", "󰁽", "󰁾", "󰁿", "󰂀", "󰂁", "󰂂", "󰁹"],
-		"tooltip-format": "Discharging: {time}",
-		"tooltip-format-charging": "Charging: {time}"
+	"custom/battery": {
+		"exec": "~/.config/waybar/scripts/battery.sh",
+		"return-type": "json",
+		"interval": 5,
+		"on-click": "kitty --class floating -e btop"
 	},
 
 	"tray": {

@@ -1,9 +1,7 @@
-#custom-system-stats:hover,
 #clock:hover,
 #pulseaudio:hover,
 #network:hover,
 #bluetooth:hover,
-#battery:hover,
 #mpris:hover,
 #tray:hover,
 #wireplumber:hover,
@@ -37,34 +35,22 @@
 	color: @crust;
 }
 
-#custom-system-stats.warning {
-	color: @crust;
-}
-
-#battery.warning {
+#custom-battery.warning {
 	background-color: @maroon;
 	color: @crust;
 }
 
-#battery.warning:hover {
+#custom-battery.warning:hover {
 	background-color: @red;
 	color: @crust;
 }
 
-#custom-system-stats.critical {
-	color: @crust;
-}
-
-#battery.critical {
+#custom-battery.critical {
 	background-color: #ff0000;
 	color: @crust;
 }
 
-#battery.critical:hover {
+#custom-battery.critical:hover {
 	background-color: @red;
-	color: @crust;
-}
-
-#battery.charging {
 	color: @crust;
 }

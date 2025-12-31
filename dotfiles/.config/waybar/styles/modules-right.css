@@ -37,11 +37,11 @@
 
 #custom-dnd,
 #idle_inhibitor,
-#custom-system-stats,
+#custom-display-mode,
+#custom-battery,
 #bluetooth,
 #network,
 #pulseaudio,
-#battery,
 #tray,
 #clock {
 	color: @crust;
@@ -51,7 +51,8 @@
 
 /* Custom modules - match button appearance with fixed height */
 #custom-dnd,
-#custom-system-stats {
+#custom-display-mode,
+#custom-battery {
 	background-color: transparent;
 	border-radius: 8px;
 	padding: 0 10px;
@@ -59,7 +60,8 @@
 }
 
 #custom-dnd label,
-#custom-system-stats label {
+#custom-display-mode label,
+#custom-battery label {
 	min-height: 26px;
 }
 
@@ -75,11 +77,19 @@
 	background-color: @sky;
 }
 
-#custom-system-stats {
-	background-color: @peach;
+#custom-battery {
+	background-color: @yellow;
 }
-#custom-system-stats:hover {
+#custom-battery:hover {
 	background-color: @red;
+	color: @crust;
+}
+
+#custom-display-mode {
+	background-color: @teal;
+}
+#custom-display-mode:hover {
+	background-color: @sapphire;
 	color: @crust;
 }
 
@@ -93,10 +103,6 @@
 
 #pulseaudio {
 	background-color: @maroon;
-}
-
-#battery {
-	background-color: @sky;
 }
 
 #tray {
