@@ -43,7 +43,7 @@
 		"return-type": "json",
 		"interval": 300,
 		"signal": 1,
-		"on-click": "kitty --class floating -e ~/.config/waybar/scripts/power-menu.sh",
+		"on-click": "kitty --class floating-power -e ~/.config/waybar/scripts/power-menu.sh",
 		"on-click-middle": "xdg-open https://www.gentoo.org/news/",
 		"on-click-right": "kitty --class floating -e ~/.config/waybar/scripts/system-update.sh"
 	},
@@ -121,7 +121,7 @@
 		"format-icons": ["󰤟", "󰤢", "󰤥", "󰤨"],
 		"tooltip-format-wifi": "📶 <b>Network</b>\n\n  🌐 SSID: {essid}\n  🏠 IP: {ipaddr}/{cidr}\n  📊 Strength: {signalStrength}%",
 		"tooltip-format-disconnected": "📵 Wi-Fi Disconnected",
-		"on-click": "kitty --class floating -e ~/.config/waybar/scripts/network.sh"
+		"on-click": "kitty --class floating-network -e ~/.config/waybar/scripts/network.sh"
 	},
 
 	"bluetooth": {
@@ -131,8 +131,8 @@
 		"tooltip-format-on": "🔵 Bluetooth: ON\n\n  No devices connected",
 		"tooltip-format-connected": "🔵 Bluetooth: ON\n\n  {num_connections} device(s) connected:\n{device_enumerate}",
 		"tooltip-format-enumerate-connected": "  🎧 {device_alias}",
-		"on-click": "kitty --class floating -e ~/.config/waybar/scripts/bluetooth.sh",
-		"on-click-right": "kitty --class floating -e ~/.config/waybar/scripts/bluetooth.sh disconnect"
+		"on-click": "kitty --class floating-bluetooth -e ~/.config/waybar/scripts/bluetooth.sh",
+		"on-click-right": "kitty --class floating-bluetooth -e ~/.config/waybar/scripts/bluetooth.sh disconnect"
 	},
 
 	"custom/mpris": {
@@ -148,7 +148,7 @@
 		"exec": "~/.config/waybar/scripts/battery.sh",
 		"return-type": "json",
 		"interval": 5,
-		"on-click": "kitty --class floating -e btop"
+		"on-click": "kitty -e btop"
 	},
 
 	"tray": {
