@@ -54,6 +54,7 @@ echo "gui-wm/hyprland-contrib ~amd64" >> /etc/portage/package.accept_keywords/gu
 echo "net-im/mattermost-desktop-bin ~amd64" >> /etc/portage/package.accept_keywords/guru-packages
 echo "x11-themes/kvantum ~amd64" >> /etc/portage/package.accept_keywords/guru-packages
 echo "media-fonts/nerdfonts ~amd64" >> /etc/portage/package.accept_keywords/guru-packages
+echo "gui-apps/wl-mirror ~amd64" >> /etc/portage/package.accept_keywords/guru-packages
 
 # USE flag settings for general software
 echo "gui-wm/hyprland qtutils" >> /etc/portage/package.use/hyprland
@@ -89,6 +90,7 @@ emerge --ask --verbose \
     x11-libs/libnotify \
     app-misc/brightnessctl\
     gui-wm/hyprland-contrib\
+    gui-apps/wl-mirror\
     app-shells/fzf\
     media-sound/pavucontrol\
     gui-apps/qt6ct\

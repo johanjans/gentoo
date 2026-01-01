@@ -20,7 +20,7 @@ fcconf=()
 RED='\033[1;31m'
 RST='\033[0m'
 
-TIMEOUT=10
+TIMEOUT=5
 
 ensure-on() {
 	local status
