@@ -11,6 +11,7 @@
 	"modules-center": [],
 	"modules-right": [
 		"custom/mpris",
+		"custom/claude",
 		"custom/uxplay",
 		"custom/display-mode",
 		"custom/dnd",
@@ -75,6 +76,13 @@
 		"interval": 1,
 		"on-click": "~/.config/waybar/scripts/dnd.sh toggle",
 		"signal": 2
+	},
+
+	"custom/claude": {
+		"exec": "~/.config/waybar/scripts/claude.sh",
+		"return-type": "json",
+		"interval": "once",
+		"on-click": "kitty --class floating-claude -e claude"
 	},
 
 	"custom/uxplay": {

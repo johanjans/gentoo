@@ -35,6 +35,7 @@
     right modules - pastel bg
 ------------------------------*/
 
+#custom-claude,
 #custom-dnd,
 #custom-hypridle,
 #custom-uxplay,
@@ -51,6 +52,7 @@
 }
 
 /* Custom modules - match button appearance with fixed height */
+#custom-claude,
 #custom-dnd,
 #custom-hypridle,
 #custom-uxplay,
@@ -62,12 +64,22 @@
 	min-height: 26px;
 }
 
+#custom-claude label,
 #custom-dnd label,
 #custom-hypridle label,
 #custom-uxplay label,
 #custom-display-mode label,
 #custom-battery label {
 	min-height: 26px;
+}
+
+#custom-claude {
+	background-color: @rosewater;
+	padding: 0 12px 0 10px;
+}
+#custom-claude:hover {
+	background-color: @red;
+	color: @crust;
 }
 
 #custom-dnd {
