@@ -9,21 +9,25 @@ get_settings() {
     if [[ -f "$UXPLAY_SCRIPT" ]]; then
         local cmd=$(grep -E "^stdbuf.*uxplay" "$UXPLAY_SCRIPT" | head -1)
 
-        local port=$(echo "$cmd" | grep -oP '(?<=-p )\d+' || echo "7000")
         local name=$(echo "$cmd" | grep -oP '(?<=-n )\S+' || echo "uxplay")
+        local port=$(echo "$cmd" | grep -oP '(?<=-p )\d+' || echo "7000")
+        local pass=$(echo "$cmd" | grep -oP '(?<=-pw )\S+')
         local res=$(echo "$cmd" | grep -oP '(?<=-s )\S+' || echo "1920x1080")
         local h265=$(echo "$cmd" | grep -q '\-h265' && echo "Yes" || echo "No")
         local audio=$(echo "$cmd" | grep -q '\-as 0' && echo "Off" || echo "On")
         local sink=$(echo "$cmd" | grep -oP '(?<=-vs )\S+' || echo "auto")
+        local vsync=$(echo "$cmd" | grep -oP '(?<=-vsync )\S+' || echo "yes")
 
-        echo "  📛 Name: $name"
-        echo "  🔌 Port: $port"
-        echo "  📺 Resolution: $res"
-        echo "  🎬 H.265/4K: $h265"
-        echo "  🔊 Audio: $audio"
-        echo "  🖥️ Sink: $sink"
+        echo "📛 Name: $name"
+        echo "🔌 Port: $port"
+        [[ -n "$pass" ]] && echo "🔑 Password: $pass"
+        echo "📺 Resolution: $res"
+        echo "🎬 H.265: $h265"
+        echo "🔊 Audio: $audio"
+        echo "🔄 VSync: $vsync"
+        echo "🖥️ Sink: $sink"
     else
-        echo "  Script not found"
+        echo "Script not found"
     fi
 }
 
@@ -32,18 +36,20 @@ is_running() {
 }
 
 get_status() {
-    local settings=$(get_settings | sed ':a;N;$!ba;s/\n/\\n/g')
+    local settings=$(get_settings)
+    # Escape newlines for JSON
+    local settings_escaped=$(echo "$settings" | sed ':a;N;$!ba;s/\n/\\n/g')
+
     if is_running; then
-        local pid=$(pgrep -x uxplay)
-        echo "{\"text\": \"󰐌\", \"tooltip\": \"🟢 AirPlay: Running (PID $pid)\\n\\n$settings\", \"class\": \"running\"}"
+        echo "{\"text\": \"󰐌\", \"tooltip\": \"🟢 AirPlay: Running\\n\\n${settings_escaped}\\n\\n🖱️ LMB: Stop server\\n🖱️ RMB: Edit config\", \"class\": \"running\"}"
     else
-        echo "{\"text\": \"󱜠\", \"tooltip\": \"⚫ AirPlay: Stopped\\n\\n$settings\\n\\n  🖱️ LMB: Start server\\n  🖱️ RMB: Edit config\", \"class\": \"stopped\"}"
+        echo "{\"text\": \"󱜠\", \"tooltip\": \"⚫ AirPlay: Stopped\\n\\n${settings_escaped}\\n\\n🖱️ LMB: Start server\\n🖱️ RMB: Edit config\", \"class\": \"stopped\"}"
     fi
 }
 
 toggle() {
     if is_running; then
-        pkill uxplay
+        pkill -x uxplay
         notify-send "󱜠 AirPlay" "Server stopped"
     else
         if [[ -f "$UXPLAY_SCRIPT" ]]; then
@@ -63,7 +69,7 @@ toggle() {
 }
 
 edit_config() {
-    kitty --class floating-editor -e "${EDITOR:-nano}" "$UXPLAY_SCRIPT"
+    kitty --class floating-editor -e "${EDITOR:-nvim}" "$UXPLAY_SCRIPT"
 }
 
 case "$1" in
