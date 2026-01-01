@@ -82,7 +82,7 @@
 		"exec": "~/.config/waybar/scripts/claude.sh",
 		"return-type": "json",
 		"interval": "once",
-		"on-click": "kitty --class floating-claude -e claude"
+		"on-click": "kitty --class floating-claude --directory /home/johan -e claude"
 	},
 
 	"custom/uxplay": {

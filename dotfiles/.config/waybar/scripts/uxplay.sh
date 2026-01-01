@@ -2,7 +2,7 @@
 
 # UxPlay AirPlay server module for Waybar
 
-UXPLAY_SCRIPT="$HOME/start_uxplay.sh"
+UXPLAY_SCRIPT="$HOME/.config/waybar/scripts/start_uxplay.sh"
 
 # Extract settings from the script
 get_settings() {
