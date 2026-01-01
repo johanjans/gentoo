@@ -11,10 +11,16 @@ get_status() {
 }
 
 toggle() {
-    makoctl mode -t do-not-disturb
-    # Dismiss all visible notifications when enabling DND
     if makoctl mode | grep -q "do-not-disturb"; then
+        # Currently DND, will disable it
+        makoctl mode -t do-not-disturb
+        pkill -RTMIN+2 waybar
+        notify-send "🔔 Notifications" "Enabled - You will receive alerts"
+    else
+        # Currently normal, will enable DND
+        makoctl mode -t do-not-disturb
         makoctl dismiss -a
+        pkill -RTMIN+2 waybar
     fi
 }
 

@@ -5,7 +5,7 @@
 /* center modules */
 #windowcount,
 #custom-system-stats,
-#idle_inhibitor,
+#custom-hypridle,
 #pulseaudio,
 #network,
 #bluetooth,
@@ -43,10 +43,10 @@
 }
 
 /*--------------------
-    idle inhibitor
+    hypridle
 --------------------*/
 
-#idle_inhibitor {
+#custom-hypridle {
 	margin-right: 8px;
 	background-color: @mauve;
 }

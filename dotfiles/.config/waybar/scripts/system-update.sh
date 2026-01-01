@@ -37,7 +37,6 @@ DANGEROUS_PATTERNS=(
 )
 
 check-updates() {
-	is_online=true
 	update_count=0
 	update_packages=""
 
@@ -162,13 +161,8 @@ display-module() {
 	local header
 	header=$(shortcuts-header | sed ':a;N;$!ba;s/\n/\\n/g')
 
-	if [[ $is_online == false ]]; then
-		echo "{ \"text\": \"󰣨\", \"tooltip\": \"$header\", \"class\": \"offline\" }"
-		return 0
-	fi
-
 	if ((update_count == 0)); then
-		echo "{ \"text\": \"󰣨\", \"tooltip\": \"$header\", \"class\": \"updated\" }"
+		echo "{ \"text\": \"󰣨\", \"tooltip\": \"$header\" }"
 		return 0
 	fi
 
@@ -177,7 +171,7 @@ display-module() {
 
 	local tooltip="📦 $update_count updates"
 	if ((selected_count > 0)); then
-		tooltip+=" (⚠️ $selected_count selected"
+		tooltip+=" (⚠️ $selected_count critical"
 		if ((dependency_count > 0)); then
 			tooltip+=", $dependency_count deps"
 		fi
@@ -191,7 +185,13 @@ display-module() {
 	# Escape double quotes for JSON
 	tooltip="${tooltip//\"/\\\"}"
 
-	echo "{ \"text\": \"󰣨\", \"tooltip\": \"$tooltip\", \"class\": \"updates-available\" }"
+	# Red for critical updates, yellow for deps only
+	local class="updates-deps"
+	if ((selected_count > 0)); then
+		class="updates-critical"
+	fi
+
+	echo "{ \"text\": \"󰣨\", \"tooltip\": \"$tooltip\", \"class\": \"$class\" }"
 }
 
 main() {

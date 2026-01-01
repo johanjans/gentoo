@@ -5,17 +5,14 @@
 #custom-distro {
 	margin-left: 5px;
 	margin-right: 10px;
+	color: @overlay1;
 }
 
-#custom-distro:hover {
-	color: @red;
-}
-
-#custom-distro.updates-available {
+#custom-distro.updates-deps:hover {
 	color: @yellow;
 }
 
-#custom-distro.offline {
+#custom-distro.updates-critical:hover {
 	color: @red;
 }
 

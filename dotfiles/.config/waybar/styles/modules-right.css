@@ -36,7 +36,8 @@
 ------------------------------*/
 
 #custom-dnd,
-#idle_inhibitor,
+#custom-hypridle,
+#custom-uxplay,
 #custom-display-mode,
 #custom-battery,
 #bluetooth,
@@ -51,15 +52,19 @@
 
 /* Custom modules - match button appearance with fixed height */
 #custom-dnd,
+#custom-hypridle,
+#custom-uxplay,
 #custom-display-mode,
 #custom-battery {
 	background-color: transparent;
 	border-radius: 8px;
-	padding: 0 10px;
+	padding: 0 15px 0 10px;
 	min-height: 26px;
 }
 
 #custom-dnd label,
+#custom-hypridle label,
+#custom-uxplay label,
 #custom-display-mode label,
 #custom-battery label {
 	min-height: 26px;
@@ -67,13 +72,14 @@
 
 #custom-dnd {
 	background-color: @pink;
+	padding: 0 12px 0 10px;
 }
 #custom-dnd:hover {
 	background-color: @red;
 	color: @crust;
 }
 
-#idle_inhibitor {
+#custom-hypridle {
 	background-color: @sky;
 }
 
@@ -85,11 +91,20 @@
 	color: @crust;
 }
 
+#custom-uxplay {
+	background-color: @sapphire;
+	padding: 0 13px 0 10px;
+}
+#custom-uxplay:hover {
+	background-color: @red;
+	color: @crust;
+}
+
 #custom-display-mode {
 	background-color: @teal;
 }
 #custom-display-mode:hover {
-	background-color: @sapphire;
+	background-color: @red;
 	color: @crust;
 }
 

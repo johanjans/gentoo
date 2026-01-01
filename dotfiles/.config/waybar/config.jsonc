@@ -11,9 +11,10 @@
 	"modules-center": [],
 	"modules-right": [
 		"custom/mpris",
+		"custom/uxplay",
 		"custom/display-mode",
 		"custom/dnd",
-		"idle_inhibitor",
+		"custom/hypridle",
 		"bluetooth",
 		"network",
 		"pulseaudio",
@@ -45,11 +46,12 @@
 		"signal": 1,
 		"on-click": "kitty --class floating-power -e ~/.config/waybar/scripts/power-menu.sh",
 		"on-click-middle": "xdg-open https://www.gentoo.org/news/",
-		"on-click-right": "kitty --class floating -e ~/.config/waybar/scripts/system-update.sh"
+		"on-click-right": "kitty -e ~/.config/waybar/scripts/system-update.sh"
 	},
 
 	"hyprland/workspaces": {
 		"format": "{name}",
+		"show-special": true,
 		"on-scroll-up": "hyprctl dispatch workspace +1",
 		"on-scroll-down": "hyprctl dispatch workspace -1",
 		"cursor": true
@@ -71,26 +73,33 @@
 		"exec": "~/.config/waybar/scripts/dnd.sh",
 		"return-type": "json",
 		"interval": 1,
-		"on-click": "~/.config/waybar/scripts/dnd.sh toggle; pkill -RTMIN+2 waybar",
+		"on-click": "~/.config/waybar/scripts/dnd.sh toggle",
 		"signal": 2
 	},
 
-	"custom/display-mode": {
-		"exec": "~/.config/waybar/scripts/display-mode.sh",
+	"custom/uxplay": {
+		"exec": "~/.config/waybar/scripts/uxplay.sh",
 		"return-type": "json",
-		"interval": 5,
-		"on-click": "~/.config/waybar/scripts/display-mode.sh mirror",
+		"interval": 2,
+		"on-click": "~/.config/waybar/scripts/uxplay.sh toggle",
+		"on-click-right": "~/.config/waybar/scripts/uxplay.sh edit",
+		"signal": 5
+	},
+
+	"custom/display-mode": {
+		"exec": "~/.config/waybar/scripts/wl-mirror-display.sh",
+		"return-type": "json",
+		"interval": 2,
+		"on-click": "~/.config/waybar/scripts/wl-mirror-display.sh toggle",
 		"signal": 3
 	},
 
-	"idle_inhibitor": {
-		"format": "{icon} ",
-		"format-icons": {
-			"activated": "󰈈",
-			"deactivated": "󰈉"
-		},
-		"tooltip-format-activated": "☕ Caffeine: ON\n\n  Screen will not sleep",
-		"tooltip-format-deactivated": "😴 Caffeine: OFF\n\n  Screen can sleep"
+	"custom/hypridle": {
+		"exec": "~/.config/waybar/scripts/hypridle-toggle.sh",
+		"return-type": "json",
+		"interval": 1,
+		"on-click": "~/.config/waybar/scripts/hypridle-toggle.sh toggle",
+		"signal": 4
 	},
 
 	"clock": {

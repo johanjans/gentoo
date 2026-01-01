@@ -11,14 +11,12 @@
 	color: @crust;
 }
 
-/* idle inhibitor - dark text */
-#idle_inhibitor,
-#idle_inhibitor.activated,
-#idle_inhibitor.deactivated {
+/* hypridle - dark text */
+#custom-hypridle {
 	color: @crust;
 }
 
-#idle_inhibitor:hover {
+#custom-hypridle:hover {
 	background-color: @red;
 	color: @crust;
 }
