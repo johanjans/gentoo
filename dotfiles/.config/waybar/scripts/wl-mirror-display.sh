@@ -22,6 +22,8 @@ case "$1" in
     toggle)
         if is_mirroring; then
             pkill -x wl-mirror
+            # Re-enable close window shortcut
+            hyprctl keyword bind "SUPER, C, killactive,"
         else
             ext=$(get_external)
             focused=$(get_focused)
@@ -35,6 +37,8 @@ case "$1" in
                     hyprctl dispatch fullscreen 0
                     hyprctl dispatch focusmonitor "$PRIMARY"
                     notify-send "🖥️ Mirroring" "Laptop → External ($res)"
+                    # Disable close window shortcut while mirroring
+                    hyprctl keyword unbind "SUPER, C"
                 else
                     # Clicked on external → mirror external to laptop
                     res=$(get_resolution "$ext")
@@ -44,6 +48,8 @@ case "$1" in
                     hyprctl dispatch fullscreen 0
                     hyprctl dispatch focusmonitor "$ext"
                     notify-send "🖥️ Mirroring" "External → Laptop ($res)"
+                    # Disable close window shortcut while mirroring
+                    hyprctl keyword unbind "SUPER, C"
                 fi
             fi
         fi
@@ -51,15 +57,17 @@ case "$1" in
         ;;
     stop)
         pkill -x wl-mirror
+        # Re-enable close window shortcut
+        hyprctl keyword bind "SUPER, C, killactive,"
         pkill -RTMIN+3 waybar
         ;;
     *)
         monitor_count=$(hyprctl monitors all -j | jq 'length')
         if [[ "$monitor_count" -eq 2 ]]; then
             if is_mirroring; then
-                echo '{"text": "󰍹", "tooltip": "🔴 Mirroring active\n\nClick to stop", "class": "mirroring"}'
+                echo '{"text": "󰍹", "tooltip": "🔴 Mirroring active\n\n🖱️ Left-click: Stop mirroring\n🖱️ Right-click: Change external resolution (temporary)", "class": "mirroring"}'
             else
-                echo '{"text": "󰍺", "tooltip": "🖥️ Mirror display\n\nClick to mirror this screen to the other"}'
+                echo '{"text": "󰍺", "tooltip": "🖥️ External display connected\n\n🖱️ Left-click: Mirror this screen\n🖱️ Right-click: Change external resolution (temporary)"}'
             fi
         else
             echo '{"text": "", "class": "hidden"}'

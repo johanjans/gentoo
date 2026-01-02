@@ -17,7 +17,7 @@
 		"custom/dnd",
 		"custom/hypridle",
 		"bluetooth",
-		"network",
+		"custom/network",
 		"pulseaudio",
 		"custom/battery",
 		"tray",
@@ -82,7 +82,7 @@
 		"exec": "~/.config/waybar/scripts/claude.sh",
 		"return-type": "json",
 		"interval": 60,
-		"on-click": "kitty --class floating-claude -e claude",
+		"on-click": "kitty --class floating-claude -o 'map ctrl+v' -e claude",
 		"on-click-right": "xdg-open https://claude.ai/settings/billing"
 	},
 
@@ -100,6 +100,7 @@
 		"return-type": "json",
 		"interval": 2,
 		"on-click": "~/.config/waybar/scripts/wl-mirror-display.sh toggle",
+		"on-click-right": "kitty --class floating -e ~/.config/waybar/scripts/monitor-profile.sh",
 		"signal": 3
 	},
 
@@ -130,15 +131,10 @@
 		"on-click-right": "pavucontrol"
 	},
 
-	"network": {
+	"custom/network": {
+		"exec": "~/.config/waybar/scripts/network-status.sh",
+		"return-type": "json",
 		"interval": 10,
-		"format-wifi": "{icon} {essid}",
-		"format-ethernet": "󰈀",
-		"format-disconnected": "󰤯",
-		"format-disabled": "󰤮",
-		"format-icons": ["󰤟", "󰤢", "󰤥", "󰤨"],
-		"tooltip-format-wifi": "📶 <b>Network</b>\n\n  🌐 SSID: {essid}\n  🏠 IP: {ipaddr}/{cidr}\n  📊 Strength: {signalStrength}%",
-		"tooltip-format-disconnected": "📵 Wi-Fi Disconnected",
 		"on-click": "kitty --class floating-network -e ~/.config/waybar/scripts/network.sh"
 	},
 

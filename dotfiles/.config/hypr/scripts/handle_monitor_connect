@@ -1,0 +1,8 @@
+#!/bin/bash
+# Poll for monitors missing wallpaper and fix them
+
+WALLPAPER="$HOME/.config/hypr/background"
+
+while sleep 3; do
+    awww query 2>/dev/null | grep -q "color: 000000" && awww img "$WALLPAPER"
+done
