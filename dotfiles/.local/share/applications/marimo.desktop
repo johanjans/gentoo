@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Marimo
+GenericName=Notebook Editor
+Comment=Reactive Python notebook
+Exec=/home/johan/.local/bin/marimo-launcher
+Type=Application
+Keywords=Python;notebook;marimo;
+Icon=/home/johan/.local/share/icons/marimo.png
+Categories=Development;IDE;
+StartupNotify=false

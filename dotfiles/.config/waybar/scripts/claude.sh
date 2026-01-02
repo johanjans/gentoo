@@ -44,10 +44,11 @@ get_usage() {
 
     # Build tooltip
     local tooltip="󰧑 Claude Code\\n\\n"
-    tooltip+="📋 Plan: ${plan_display}\\n\\n"
+    tooltip+="📋 Plan: ${plan_display}\\n"
     tooltip+="⏱️ 5-hour: ${five_hour}% (resets ${five_hour_reset})\\n"
     tooltip+="📅 7-day: ${seven_day}% (resets ${seven_day_reset})\\n\\n"
-    tooltip+="🖱️ Click to open Claude"
+    tooltip+="🖱️ Click to open Claude\\n"
+    tooltip+="⚙️ Right-click for settings"
 
     # Determine class based on usage
     local class="claude"

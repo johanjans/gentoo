@@ -4,7 +4,7 @@
 
 #custom-mpris {
 	padding: 0 12px;
-	background-color: @mauve;
+	background-color: @maroon;
 	color: @crust;
 	margin-left: 2px;
 	margin-right: 2px;
@@ -74,7 +74,7 @@
 }
 
 #custom-claude {
-	background-color: @rosewater;
+	background-color: @peach;
 	padding: 0 12px 0 10px;
 }
 #custom-claude:hover {
@@ -83,7 +83,7 @@
 }
 
 #custom-dnd {
-	background-color: @pink;
+	background-color: @teal;
 	padding: 0 12px 0 10px;
 }
 #custom-dnd:hover {
@@ -96,7 +96,7 @@
 }
 
 #custom-battery {
-	background-color: @yellow;
+	background-color: @mauve;
 }
 #custom-battery:hover {
 	background-color: @red;
@@ -104,7 +104,7 @@
 }
 
 #custom-uxplay {
-	background-color: @sapphire;
+	background-color: @yellow;
 	padding: 0 13px 0 10px;
 }
 #custom-uxplay:hover {
@@ -113,7 +113,7 @@
 }
 
 #custom-display-mode {
-	background-color: @teal;
+	background-color: @green;
 }
 #custom-display-mode:hover {
 	background-color: @red;
@@ -121,21 +121,21 @@
 }
 
 #bluetooth {
-	background-color: @lavender;
+	background-color: @sapphire;
 }
 
 #network {
-	background-color: @green;
+	background-color: @blue;
 }
 
 #pulseaudio {
-	background-color: @maroon;
+	background-color: @lavender;
 }
 
 #tray {
-	background-color: @peach;
+	background-color: @pink;
 }
 
 #clock {
-	background-color: @pink;
+	background-color: @rosewater;
 }

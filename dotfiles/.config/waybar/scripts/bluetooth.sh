@@ -54,16 +54,6 @@ ensure-on() {
 	notify-send 'Bluetooth On' -i 'network-bluetooth-activated' -h string:x-canonical-private-synchronous:bluetooth
 }
 
-resolve-device-name() {
-	local addr=$1 fallback=$2
-	local name
-	# Try to get the resolved name from device info cache
-	name=$(bluetoothctl info "$addr" 2>/dev/null | awk -F': ' '/^\s*Name:/ {print $2; exit}')
-	# Fall back to Alias if Name isn't set
-	[[ -z $name ]] && name=$(bluetoothctl info "$addr" 2>/dev/null | awk -F': ' '/^\s*Alias:/ {print $2; exit}')
-	printf '%s' "${name:-$fallback}"
-}
-
 get-device-list() {
 	bluetoothctl --timeout $TIMEOUT scan on > /dev/null &
 
@@ -83,13 +73,7 @@ get-device-list() {
 	done
 	printf '\n%bScanning stopped.%b\n\n' "$RED" "$RST"
 
-	# Build device list with resolved names
-	list=""
-	while read -r _ addr name; do
-		resolved=$(resolve-device-name "$addr" "$name")
-		list+="$addr $resolved"$'\n'
-	done < <(bluetoothctl devices | sed 's/\x1b\[[0-9;]*m//g')
-	list=${list%$'\n'}
+	list=$(bluetoothctl devices | sed 's/^Device //')
 
 	if [[ -z $list ]]; then
 		notify-send 'Bluetooth' 'No devices found' -i 'package-broken'
@@ -102,7 +86,7 @@ select-device() {
 	header=$(printf '%-17s %s' 'Address' 'Name')
 	local opts=(
 		'--border=sharp'
-		'--border-label= Bluetooth Devices '
+		'--border-label= Connect to Device '
 		'--ghost=Search'
 		"--header=$header"
 		'--height=~100%'
@@ -128,19 +112,20 @@ select-device() {
 }
 
 pair-and-connect() {
-	# Always remove and re-pair fresh to avoid stale pairing key issues
-	printf 'Removing old pairing...'
-	bluetoothctl remove "$address" &>/dev/null
+	# Check if already paired - if so, just connect
+	local paired
+	paired=$(bluetoothctl info "$address" 2>/dev/null | awk '/Paired/ {print $2}')
 
-	# Rescan to rediscover the device after removal
-	printf '\nRediscovering device...'
-	bluetoothctl --timeout 5 scan on &>/dev/null &
-	sleep 3
-
-	printf '\nPairing...'
-	if ! timeout $TIMEOUT bluetoothctl pair "$address" > /dev/null; then
-		notify-send 'Bluetooth' 'Failed to pair' -i 'package-purge'
-		return 1
+	if [[ $paired == 'yes' ]]; then
+		printf 'Already paired, connecting...'
+	else
+		printf 'Pairing...'
+		# Enable pairable mode and use agent for proper bonding
+		bluetoothctl pairable on > /dev/null
+		if ! timeout $((TIMEOUT * 2)) bluetoothctl --agent=NoInputNoOutput pair "$address" > /dev/null 2>&1; then
+			notify-send 'Bluetooth' 'Failed to pair' -i 'package-purge'
+			return 1
+		fi
 	fi
 
 	printf '\nTrusting...'
@@ -155,28 +140,42 @@ pair-and-connect() {
 	notify-send 'Bluetooth' 'Successfully connected' -i 'package-install'
 }
 
-get-connected-devices() {
+get-known-devices() {
+	local connected paired addr
+	declare -A connected_map
+
+	# Get connected devices
+	while read -r addr _; do
+		[[ -n $addr ]] && connected_map[$addr]=1
+	done < <(bluetoothctl devices Connected | sed 's/^Device //')
+
+	# Build list with status indicators
 	list=""
-	# Strip ANSI color codes before parsing
-	while read -r _ addr name; do
-		if bluetoothctl info "$addr" 2>/dev/null | grep -q "Connected: yes"; then
-			list+="$addr $name"$'\n'
+	while read -r line; do
+		[[ -z $line ]] && continue
+		addr=${line%% *}
+		name=${line#* }
+		if [[ -n ${connected_map[$addr]} ]]; then
+			list+=$(printf '%-17s   %-10s %s\n' "$addr" "connected" "$name")
+		else
+			list+=$(printf '%-17s   %-10s %s\n' "$addr" "paired" "$name")
 		fi
-	done < <(bluetoothctl devices | sed 's/\x1b\[[0-9;]*m//g')
+	done < <(bluetoothctl devices Paired | sed 's/^Device //')
+
 	list=${list%$'\n'}  # Remove trailing newline
 
 	if [[ -z $list ]]; then
-		notify-send 'Bluetooth' 'No connected devices' -i 'network-bluetooth'
+		notify-send 'Bluetooth' 'No known devices' -i 'network-bluetooth'
 		return 1
 	fi
 }
 
-select-connected-device() {
+select-known-device() {
 	local header
-	header=$(printf '%-17s %s' 'Address' 'Name')
+	header=$(printf '%-17s   %-10s %s\n%-17s   %-10s %s' 'Address' 'Status' 'Name' 'Click: disconnect' '' 'Right-click: forget')
 	local opts=(
 		'--border=sharp'
-		'--border-label= Connected Devices '
+		'--border-label= Manage Devices '
 		'--ghost=Search'
 		"--header=$header"
 		'--height=~100%'
@@ -184,6 +183,8 @@ select-connected-device() {
 		'--info=inline-right'
 		'--pointer='
 		'--reverse'
+		'--bind=right-click:execute-silent(bluetoothctl disconnect {1} 2>/dev/null; bluetoothctl remove {1})+abort'
+		"${fcconf[@]}"
 	)
 
 	address=$(fzf "${opts[@]}" <<< "$list" | awk '{print $1}')
@@ -214,8 +215,8 @@ connect-mode() {
 }
 
 disconnect-mode() {
-	get-connected-devices || exit 1
-	select-connected-device || exit 1
+	get-known-devices || exit 1
+	select-known-device || exit 1
 	disconnect-device || exit 1
 }
 

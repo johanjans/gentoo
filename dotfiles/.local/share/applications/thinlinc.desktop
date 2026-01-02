@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=ThinLinc
+Comment=ThinLinc Client
+Exec=/opt/thinlink/bin/tlclient
+Icon=/opt/thinlink/lib/tlclient/share/icons/hicolor/128x128/apps/thinlinc-client.png
+Terminal=false
+Type=Application
+Categories=Network;RemoteAccess;

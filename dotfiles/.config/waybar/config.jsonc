@@ -82,7 +82,8 @@
 		"exec": "~/.config/waybar/scripts/claude.sh",
 		"return-type": "json",
 		"interval": 60,
-		"on-click": "kitty --class floating-claude -e claude"
+		"on-click": "kitty --class floating-claude -e claude",
+		"on-click-right": "xdg-open https://claude.ai/settings/billing"
 	},
 
 	"custom/uxplay": {
