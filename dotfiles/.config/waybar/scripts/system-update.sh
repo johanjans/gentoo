@@ -116,6 +116,7 @@ shortcuts-header() {
   Super + F       Fullscreen
   Super + P       Pseudo-tile
   Super + J       Toggle Split
+  Super + K       Swap Windows
   Super + Arrows  Move Focus
   Alt + Tab       Cycle Windows
 
