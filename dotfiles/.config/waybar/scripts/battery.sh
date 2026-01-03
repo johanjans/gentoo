@@ -101,7 +101,7 @@ tooltip="🔋 Battery: ${capacity}% (${status})"
 if [[ -n "$time_info" ]]; then
     tooltip="${tooltip}\n⏱️ Time: ${time_info}"
 fi
-tooltip="${tooltip}\n\n🖥️ CPU: ${cpu}%\n🌡️ Temperature: ${temp}°C\n🎮 GPU: ${gpu_usage}\n💾 Swap: ${swap_used}/${swap_total_mb} MB (${swap_percent}%)\n🧠 Memory: ${mem_used}/${mem_total_mb} MB (${mem_percent}%)\n💿 Disk: ${disk_used}/${disk_total} (${disk_percent}%)"
+tooltip="${tooltip}\n\n🖥️ CPU: ${cpu}%\n🌡️ Temperature: ${temp}°C\n🎮 GPU: ${gpu_usage}\n💾 Swap: ${swap_used}/${swap_total_mb} MB (${swap_percent}%)\n🧠 Memory: ${mem_used}/${mem_total_mb} MB (${mem_percent}%)\n💿 Disk: ${disk_used}/${disk_total} (${disk_percent}%)\n\n🖱️ LMB: System monitor"
 
 # Determine class based on battery level
 class=""

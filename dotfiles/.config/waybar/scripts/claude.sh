@@ -6,7 +6,7 @@ CREDS_FILE="$HOME/.claude/.credentials.json"
 
 get_usage() {
     if [[ ! -f "$CREDS_FILE" ]]; then
-        echo '{"text": "󰧑", "tooltip": "Claude Code\n\nNot logged in", "class": "claude"}'
+        echo '{"text": "󰧑", "tooltip": "Claude Code CLI\n\nNot logged in", "class": "claude"}'
         return
     fi
 
@@ -17,7 +17,7 @@ get_usage() {
     local token=$(python3 -c "import json; print(json.load(open('$CREDS_FILE'))['claudeAiOauth']['accessToken'])" 2>/dev/null)
 
     if [[ -z "$token" ]]; then
-        echo '{"text": "󰧑", "tooltip": "Claude Code\n\nNo token found", "class": "claude"}'
+        echo '{"text": "󰧑", "tooltip": "Claude Code CLI\n\nNo token found", "class": "claude"}'
         return
     fi
 
@@ -28,7 +28,7 @@ get_usage() {
         "https://api.anthropic.com/api/oauth/usage" 2>/dev/null)
 
     if [[ -z "$usage" ]] || echo "$usage" | grep -q '"error"'; then
-        echo '{"text": "󰧑", "tooltip": "Claude Code\n\nCould not fetch usage", "class": "claude"}'
+        echo '{"text": "󰧑", "tooltip": "Claude Code CLI\n\nCould not fetch usage", "class": "claude"}'
         return
     fi
 
@@ -43,7 +43,7 @@ get_usage() {
     local plan_display="${plan^}"  # Capitalize first letter
 
     # Build tooltip
-    local tooltip="󰧑 Claude Code\\n\\n"
+    local tooltip="󰧑 Claude Code CLI\\n\\n"
     tooltip+="📋 Plan: ${plan_display}\\n"
     tooltip+="⏱️ 5-hour: ${five_hour}% (resets ${five_hour_reset})\\n"
     tooltip+="📅 7-day: ${seven_day}% (resets ${seven_day_reset})\\n\\n"

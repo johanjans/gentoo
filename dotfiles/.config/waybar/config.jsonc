@@ -14,8 +14,7 @@
 		"custom/claude",
 		"custom/uxplay",
 		"custom/display-mode",
-		"custom/dnd",
-		"custom/hypridle",
+		"custom/presentation-mode",
 		"bluetooth",
 		"custom/network",
 		"pulseaudio",
@@ -70,11 +69,11 @@
 	},
 
 
-	"custom/dnd": {
-		"exec": "~/.config/waybar/scripts/dnd.sh",
+	"custom/presentation-mode": {
+		"exec": "~/.config/waybar/scripts/presentation-mode.sh",
 		"return-type": "json",
-		"interval": 1,
-		"on-click": "~/.config/waybar/scripts/dnd.sh toggle",
+		"interval": 2,
+		"on-click": "~/.config/waybar/scripts/presentation-mode.sh toggle",
 		"signal": 2
 	},
 
@@ -83,7 +82,7 @@
 		"return-type": "json",
 		"interval": 60,
 		"on-click": "kitty --class floating-claude -o 'map ctrl+v' -e claude",
-		"on-click-right": "xdg-open https://claude.ai/settings/billing"
+		"on-click-right": "google-chrome-stable --new-window https://claude.ai/settings/billing"
 	},
 
 	"custom/uxplay": {
@@ -104,17 +103,10 @@
 		"signal": 3
 	},
 
-	"custom/hypridle": {
-		"exec": "~/.config/waybar/scripts/hypridle-toggle.sh",
-		"return-type": "json",
-		"interval": 1,
-		"on-click": "~/.config/waybar/scripts/hypridle-toggle.sh toggle",
-		"signal": 4
-	},
-
 	"clock": {
 		"format": "{:%H:%M}",
-		"tooltip-format": "{:%A %d %B %Y  (v%V)}\n\n━━━ 🎓 JTH Academic Year 2026 ━━━\n\n🌸 SPRING (Jan 19 – Jun 10)\n  📚 SP 3       Jan 19 – Mar 13  (v4-11)\n  🔄 Re-exam    Feb 7 – 15       (v7, SP 2)\n  📝 Exam 3     Mar 14 – 22      (v12)\n  📚 SP 4       Mar 23 – May 22  (v13-21)\n  📝 Exam 4     May 23 – 31      (v22)\n  🎓 Graduation May 29\n  🔄 Re-exam    Jun 1 – 10       (v23-24, SP 1-3)\n\n🍂 AUTUMN (Aug 31 – Jan 17)\n  🔄 Re-exam    Aug 17 – 23      (v34, SP 3-4)\n  👋 Intro      Aug 24 – 30      (v35)\n  📚 SP 1       Aug 31 – Oct 16  (v36-42)\n  📝 Exam 1     Oct 17 – 25      (v43)\n  📚 SP 2       Oct 26 – Dec 11  (v44-50)\n  📝 Exam 2     Dec 12 – 20      (v51)\n  🔄 Re-exam    Jan 11 – 17      (v2, SP 1+4)",
+		"tooltip": true,
+		"tooltip-format": "📅 {:%A %d %B %Y (v%V)}\n\n━━━ 🎓 JTH Academic Year 2026 ━━━\n\n🌸 SPRING (Jan 19 – Jun 10)\n📚 SP 3       Jan 19 – Mar 13  (v4-11)\n🔄 Re-exam    Feb 7 – 15       (v7, SP 2)\n📝 Exam 3     Mar 14 – 22      (v12)\n📚 SP 4       Mar 23 – May 22  (v13-21)\n📝 Exam 4     May 23 – 31      (v22)\n🎓 Graduation May 29\n🔄 Re-exam    Jun 1 – 10       (v23-24, SP 1-3)\n\n🍂 AUTUMN (Aug 31 – Jan 17)\n🔄 Re-exam    Aug 17 – 23      (v34, SP 3-4)\n👋 Intro      Aug 24 – 30      (v35)\n📚 SP 1       Aug 31 – Oct 16  (v36-42)\n📝 Exam 1     Oct 17 – 25      (v43)\n📚 SP 2       Oct 26 – Dec 11  (v44-50)\n📝 Exam 2     Dec 12 – 20      (v51)\n🔄 Re-exam    Jan 11 – 17      (v2, SP 1+4)",
 		"locale": "sv_SE.utf8"
 	},
 
@@ -126,7 +118,7 @@
 			"headphone": "󰋋",
 			"headset": "󰋎"
 		},
-		"tooltip-format": "🔊 Audio\n\n  🎧 Output: {desc}\n  🎤 Input: {source_desc}",
+		"tooltip-format": "Audio Devices\n\n🎧 Output: {desc}\n🎤 Input: {source_desc}\n\n🖱️ LMB: Toggle mute\n🖱️ RMB: Volume mixer",
 		"on-click": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle",
 		"on-click-right": "pavucontrol"
 	},
@@ -139,12 +131,12 @@
 	},
 
 	"bluetooth": {
-		"format-off": "󰂲 off",
-		"format-on": "󰂯 on",
-		"format-connected": "󰂱 on ({num_connections})",
-		"tooltip-format-on": "🔵 Bluetooth: ON\n\n  No devices connected",
-		"tooltip-format-connected": "🔵 Bluetooth: ON\n\n  {num_connections} device(s) connected:\n{device_enumerate}",
-		"tooltip-format-enumerate-connected": "  🎧 {device_alias}",
+		"format-off": "󰂲",
+		"format-on": "󰂯",
+		"format-connected": "󰂱 {num_connections}",
+		"tooltip-format-on": "🔵 Bluetooth: ON\n\nNo devices connected\n\n🖱️ LMB: Scan and connect\n🖱️ RMB: Manage paired devices",
+		"tooltip-format-connected": "🔵 Bluetooth: ON\n\n{num_connections} device(s) connected:\n{device_enumerate}\n\n🖱️ LMB: Scan and connect\n🖱️ RMB: Manage paired devices",
+		"tooltip-format-enumerate-connected": "🎧 {device_alias}",
 		"on-click": "kitty --class floating-bluetooth -e ~/.config/waybar/scripts/bluetooth.sh",
 		"on-click-right": "kitty --class floating-bluetooth -e ~/.config/waybar/scripts/bluetooth.sh disconnect"
 	},
@@ -153,7 +145,7 @@
 		"exec": "~/.config/waybar/scripts/mpris.sh",
 		"return-type": "json",
 		"interval": 2,
-		"on-click": "playerctl play-pause",
+		"on-click": "~/.config/waybar/scripts/mpris.sh click",
 		"on-scroll-up": "playerctl next",
 		"on-scroll-down": "playerctl previous"
 	},

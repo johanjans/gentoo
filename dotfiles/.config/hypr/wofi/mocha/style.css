@@ -59,10 +59,11 @@
 /* Window */
 window {
   margin: 0px;
-  padding: 10px;
+  padding: 5px;
   border: 0.16em solid @lavender;
-  border-radius: 0.1em;
-  background-color: rgba(30, 30, 46, 0.85);
+  border-radius: 10px;
+  background-color: rgba(30, 30, 46, 0.5);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
   animation: slideIn 0.5s ease-in-out both;
 }
 
@@ -73,14 +74,14 @@ window {
   }
 
   100% {
-     opacity: 0.75;
+     opacity: 1;
   }
 }
 
 /* Inner Box */
 #inner-box {
-  margin: 5px;
-  padding: 10px;
+  margin: 2px;
+  padding: 5px;
   border: none;
   background-color: transparent;
   animation: fadeIn 0.5s ease-in-out both;
@@ -99,8 +100,8 @@ window {
 
 /* Outer Box */
 #outer-box {
-  margin: 5px;
-  padding: 10px;
+  margin: 2px;
+  padding: 5px;
   border: none;
   background-color: transparent;
 }
@@ -108,7 +109,7 @@ window {
 /* Scroll */
 #scroll {
   margin: 0px;
-  padding: 10px;
+  padding: 5px;
   border: none;
   background-color: transparent;
 }
@@ -118,7 +119,7 @@ window {
   margin: 5px 20px;
   padding: 10px;
   border: none;
-  border-radius: 0.1em;
+  border-radius: 10px;
   color: @text;
   background-color: transparent;
   animation: fadeIn 0.5s ease-in-out both;
@@ -141,8 +142,12 @@ window {
   animation: fadeIn 0.5s ease-in-out both;
 }
 
+/* Entry */
 #entry {
   background-color: transparent;
+  border-radius: 10px;
+  padding: 5px;
+  transition: all 0.2s ease;
 }
 
 #entry arrow {
@@ -150,9 +155,15 @@ window {
   color: @lavender;
 }
 
+/* Hover Entry */
+#entry:hover {
+  background-color: @surface0;
+}
+
 /* Selected Entry */
 #entry:selected {
   border: 0.11em solid @lavender;
+  border-radius: 10px;
 }
 
 #entry:selected #text {
@@ -161,4 +172,9 @@ window {
 
 #entry:drop(active) {
   background-color: @lavender!important;
+}
+
+/* App Icons */
+#img {
+  margin-right: 10px;
 }

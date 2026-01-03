@@ -14,9 +14,29 @@ get_icon() {
     esac
 }
 
+open_music() {
+    google-chrome-stable --new-window "https://music.youtube.com"
+}
+
+case "$1" in
+    open)
+        open_music
+        exit 0
+        ;;
+    click)
+        status=$(playerctl status 2>/dev/null)
+        if [ -z "$status" ] || [ "$status" = "Stopped" ]; then
+            open_music
+        else
+            playerctl play-pause
+        fi
+        exit 0
+        ;;
+esac
+
 status=$(playerctl status 2>/dev/null)
 if [ -z "$status" ] || [ "$status" = "Stopped" ]; then
-    echo '{"text": "", "class": "stopped"}'
+    echo '{"text": "󰝚", "tooltip": "⏹️ No audio playing\n\n🖱️ LMB: Open YouTube Music", "class": "stopped"}'
     exit 0
 fi
 
@@ -63,7 +83,18 @@ if [ ${#display} -gt 40 ]; then
 fi
 
 text="$icon $display"
-tooltip="🎵 $player: $artist - $title"
+
+# Build tooltip with icons
+if [ "$status" = "Paused" ]; then
+    tooltip="⏸️ Paused\n\n🎤 $artist\n🎵 $title"
+else
+    tooltip="▶️ Now Playing\n\n🎤 $artist\n🎵 $title"
+fi
+if [ -n "$album" ]; then
+    tooltip="$tooltip\n💿 $album"
+fi
+tooltip="$tooltip\n\n📻 Player: $player\n\n🖱️ LMB: Play/pause\n🖱️ Scroll: Next/previous track"
+
 class=$(echo "$status" | tr '[:upper:]' '[:lower:]')
 
 printf '{"text": "%s", "tooltip": "%s", "class": "%s"}\n' "$text" "$tooltip" "$class"

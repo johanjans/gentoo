@@ -1,7 +1,6 @@
-[config]
 show=drun
-width=1000
-height=400
+width=975
+height=510
 always_parse_args=true
 show_all=false
 term=kitty
@@ -11,4 +10,8 @@ insensitive=true
 prompt=
 columns=3
 allow_images=true
+image_size=48
 no_actions=true
+matching=fuzzy
+sort_order=alphabetical
+layer=overlay

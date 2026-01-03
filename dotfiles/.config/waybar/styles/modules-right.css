@@ -3,7 +3,7 @@
 ----------------*/
 
 #custom-mpris {
-	padding: 0 12px;
+	padding: 0 14px 0 10px;
 	background-color: @maroon;
 	color: @crust;
 	margin-left: 2px;
@@ -40,6 +40,7 @@
 #custom-hypridle,
 #custom-uxplay,
 #custom-display-mode,
+#custom-presentation-mode,
 #custom-battery,
 #bluetooth,
 #custom-network,
@@ -57,6 +58,7 @@
 #custom-hypridle,
 #custom-uxplay,
 #custom-display-mode,
+#custom-presentation-mode,
 #custom-battery {
 	background-color: transparent;
 	border-radius: 8px;
@@ -69,6 +71,7 @@
 #custom-hypridle label,
 #custom-uxplay label,
 #custom-display-mode label,
+#custom-presentation-mode label,
 #custom-battery label {
 	min-height: 26px;
 }
@@ -116,6 +119,15 @@
 	background-color: @green;
 }
 #custom-display-mode:hover {
+	background-color: @red;
+	color: @crust;
+}
+
+#custom-presentation-mode {
+	background-color: @flamingo;
+	padding: 0 13px 0 10px;
+}
+#custom-presentation-mode:hover {
 	background-color: @red;
 	color: @crust;
 }

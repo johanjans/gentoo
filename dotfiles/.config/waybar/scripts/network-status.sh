@@ -110,6 +110,9 @@ main() {
 		tooltip+="\n\n${eth_info}"
 	fi
 
+	# Add action documentation
+	tooltip+="\n\n🖱️ LMB: Connect to network"
+
 	# Output JSON for waybar
 	printf '{"text": "%s", "tooltip": "%s", "class": "%s"}\n' "$text" "$tooltip" "$class"
 }
