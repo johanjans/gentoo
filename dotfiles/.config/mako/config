@@ -8,7 +8,7 @@ icons=1
 max-icon-size=64
 default-timeout=5000
 ignore-timeout=1
-font=monospace 10
+font=Inter 12
 
 # Catppuccin Mocha
 background-color=#1e1e2e80
