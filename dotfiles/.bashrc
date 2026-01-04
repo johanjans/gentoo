@@ -79,7 +79,4 @@ alias v='nvim'
 alias n='nvim'
 alias htop='btop'
 alias sudo='doas'
-alias m='source ~/.venv/bin/activate && marimo edit'
 
-# NEW TERMINAL (only in Hyprland startup terminal)
-[[ "$KITTY_STARTUP" == "1" ]] && fastfetch --kitty-direct $HOME/.config/fastfetch/gentoo-signet.png

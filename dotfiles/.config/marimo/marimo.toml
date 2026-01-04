@@ -1,0 +1,84 @@
+[ai]
+rules = ""
+mode = "manual"
+inline_tooltip = false
+
+[ai.models]
+displayed_models = []
+custom_models = []
+
+[save]
+autosave = "after_delay"
+format_on_save = false
+autosave_delay = 1000
+
+[language_servers.ty]
+
+[language_servers.pylsp]
+enabled = true
+enable_mypy = true
+enable_pyflakes = false
+enable_ruff = true
+enable_flake8 = false
+enable_pylint = false
+enable_pydocstyle = false
+
+[language_servers.basedpyright]
+
+[server]
+browser = "default"
+follow_symlink = false
+
+[experimental]
+external_agents = false
+
+[package_management]
+manager = "pip"
+
+[snippets]
+include_default_snippets = true
+custom_paths = []
+
+[completion]
+copilot = false
+activate_on_typing = true
+
+[keymap]
+destructive_delete = true
+preset = "default"
+
+[keymap.overrides]
+
+[formatting]
+line_length = 79
+
+[mcp]
+presets = []
+
+[mcp.mcpServers]
+
+[runtime]
+watcher_on_save = "lazy"
+default_sql_output = "auto"
+reactive_tests = true
+output_max_bytes = 8000000
+on_cell_change = "autorun"
+std_stream_max_bytes = 1000000
+auto_reload = "off"
+default_auto_download = []
+auto_instantiate = false
+
+[diagnostics]
+sql_linter = true
+
+[datasources]
+
+[display]
+default_table_max_columns = 50
+reference_highlighting = true
+code_editor_font_size = 14
+theme = "system"
+cell_output = "below"
+dataframes = "rich"
+default_width = "full"
+default_table_page_size = 10

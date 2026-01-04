@@ -1,0 +1,62 @@
+#!/usr/bin/env bash
+#
+# Marimo launcher - starts a new marimo server per instance
+#
+
+VENV_PATH="$HOME/.venv/bin/activate"
+NOTEBOOKS_DIR="$HOME/notebooks"
+TIMEOUT_MINUTES=0.083  # ~5 seconds
+
+MARIMO_PID=""
+NOTEBOOK_PATH=""
+
+cleanup() {
+    [[ -n "$MARIMO_PID" ]] && kill "$MARIMO_PID" 2>/dev/null
+    # Remove if still just the template (single empty cell)
+    if [[ -f "$NOTEBOOK_PATH" ]] && [[ $(grep -c '@app.cell' "$NOTEBOOK_PATH") -le 1 ]]; then
+        if grep -Pzq '@app\.cell\ndef _\(\):\n    return \(\)' "$NOTEBOOK_PATH"; then
+            rm -f "$NOTEBOOK_PATH"
+            rm -f "$NOTEBOOKS_DIR/__marimo__/session/$(basename "$NOTEBOOK_PATH").json"
+        fi
+    fi
+}
+trap cleanup EXIT
+
+source "$VENV_PATH"
+mkdir -p "$NOTEBOOKS_DIR"
+
+# Find available port
+PORT=$(shuf -i 2720-2799 -n 1)
+while ss -tln | grep -q ":$PORT "; do PORT=$((PORT + 1)); done
+
+# Find available notebook name
+for n in $(seq 1 1000); do
+    NOTEBOOK_PATH="$NOTEBOOKS_DIR/jj_marimo_notebook_${n}.py"
+    [[ ! -e "$NOTEBOOK_PATH" ]] && break
+done
+cat > "$NOTEBOOK_PATH" << EOF
+import marimo
+
+__generated_with = "$(marimo --version)"
+app = marimo.App()
+
+@app.cell
+def _():
+    return ()
+
+if __name__ == "__main__":
+    app.run()
+EOF
+motheme apply -q catppuccin "$NOTEBOOK_PATH"
+
+# Start marimo and wait for it
+cd "$NOTEBOOKS_DIR"
+marimo edit --headless --no-token --port "$PORT" --timeout "$TIMEOUT_MINUTES" "$NOTEBOOK_PATH" &
+MARIMO_PID=$!
+
+# Wait for server, then open browser
+URL="http://localhost:$PORT"
+until curl -s "$URL" >/dev/null 2>&1; do sleep 0.3; done
+google-chrome-stable --user-data-dir="$HOME/.config/marimo-browser" --class=marimo-notebook --new-window "$URL" &
+
+wait "$MARIMO_PID" 2>/dev/null

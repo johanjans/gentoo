@@ -3,6 +3,18 @@
 # Claude Code module for Waybar with usage stats
 
 CREDS_FILE="$HOME/.claude/.credentials.json"
+CLAUDE_DIR="/home/johan/claude"
+
+launch_claude() {
+    mkdir -p "$CLAUDE_DIR"
+    cd "$CLAUDE_DIR" && kitty --class floating-claude -o 'map ctrl+v' -e claude
+}
+
+# Handle launch action
+if [[ "$1" == "launch" ]]; then
+    launch_claude
+    exit 0
+fi
 
 get_usage() {
     if [[ ! -f "$CREDS_FILE" ]]; then

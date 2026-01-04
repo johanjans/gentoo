@@ -100,6 +100,7 @@
 
 #custom-battery {
 	background-color: @mauve;
+	padding: 0 12px 0 10px;
 }
 #custom-battery:hover {
 	background-color: @red;
