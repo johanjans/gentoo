@@ -10,7 +10,7 @@
 	background-color: transparent;
 }
 #waybar > box {
-	margin: 4px;
+	margin: 4px 2px;
 	background-color: transparent;
 }
 

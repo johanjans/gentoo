@@ -4,7 +4,7 @@
 	------------*/
 
 	"modules-left": [
-		"custom/distro",
+		"custom/power",
 		"hyprland/workspaces",
 		"hyprland/window"
 	],
@@ -39,14 +39,14 @@
 	    modules
 	-------------*/
 
-	"custom/distro": {
-		"exec": "~/.config/waybar/scripts/system-update.sh module",
+	"custom/power": {
+		"exec": "~/.config/waybar/scripts/power-updates.sh",
 		"return-type": "json",
 		"interval": 300,
 		"signal": 1,
 		"on-click": "kitty --class floating-power -e ~/.config/waybar/scripts/power-menu.sh",
 		"on-click-middle": "xdg-open https://www.gentoo.org/news/",
-		"on-click-right": "kitty -e ~/.config/waybar/scripts/system-update.sh"
+		"on-click-right": "kitty --hold -e ~/.config/waybar/scripts/gentoo-update.sh"
 	},
 
 	"hyprland/workspaces": {
@@ -81,7 +81,7 @@
 		"exec": "~/.config/waybar/scripts/claude.sh",
 		"return-type": "json",
 		"interval": 60,
-		"on-click": "kitty --class floating-claude -o 'map ctrl+v' -e claude",
+		"on-click": "~/.config/waybar/scripts/claude.sh launch",
 		"on-click-right": "google-chrome-stable --new-window https://claude.ai/settings/billing"
 	},
 

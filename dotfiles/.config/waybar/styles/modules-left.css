@@ -1,19 +1,27 @@
 /*--------------
-    distro logo
+    power button
 --------------*/
 
-#custom-distro {
-	margin-left: 5px;
-	margin-right: 10px;
-	color: @overlay1;
+#custom-power {
+	background-color: @maroon;
+	color: @crust;
+	margin-left: 2px;
+	margin-right: 2px;
+	padding: 0 12px 0 8px;
+	border-radius: 8px;
+	min-height: 26px;
 }
 
-#custom-distro.updates-deps:hover {
-	color: @yellow;
+#custom-power label {
+	min-height: 26px;
 }
 
-#custom-distro.updates-critical:hover {
-	color: @red;
+#custom-power.updates-available {
+	background-color: @red;
+}
+
+#custom-power:hover {
+	background-color: @red;
 }
 
 /*--------------
