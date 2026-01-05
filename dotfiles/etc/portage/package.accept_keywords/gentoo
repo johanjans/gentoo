@@ -1,0 +1,4 @@
+media-gfx/blender-bin ~amd64
+sys-boot/plymouth-openrc-plugin ~amd64
+media-fonts/inter ~amd64
+

@@ -1,0 +1,14 @@
+gui-wm/hyprland ~amd64
+gui-libs/xdg-desktop-portal-hyprland ~amd64
+gui-apps/hyprlock ~amd64
+gui-apps/hypridle ~amd64
+gui-apps/hyprsunset ~amd64
+media-video/obs-studio ~amd64
+gui-libs/hyprutils ~amd64
+gui-libs/hyprlang ~amd64
+gui-libs/hyprcursor ~amd64
+gui-libs/aquamarine ~amd64
+dev-libs/hyprland-protocols ~amd64
+dev-cpp/sdbus-c++ ~amd64
+dev-util/hyprwayland-scanner ~amd64
+gui-libs/hyprland-qtutils ~amd64

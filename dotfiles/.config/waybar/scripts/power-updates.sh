@@ -44,9 +44,6 @@ shortcuts_header() {
 📸 <b>SCREENSHOT</b>
   Print        Copy to Clipboard
   Shift Print  Save to ~/Pictures
-
-📋 <b>CLIPBOARD</b>
-  Super Ctrl V  Clipboard History
 SHORTCUTS
 }
 

@@ -1,0 +1,12 @@
+gui-apps/awww ~amd64
+sys-auth/hyprpolkitagent ~amd64
+app-misc/brightnessctl ~amd64
+gui-wm/hyprland-contrib ~amd64
+net-im/mattermost-desktop-bin ~amd64
+x11-themes/kvantum ~amd64
+media-fonts/nerdfonts ~amd64
+dev-vcs/lazygit ~amd64
+media-video/uxplay ~amd64
+gui-apps/wl-mirror ~amd64
+x11-themes/catppuccin-gtk ~amd64
+x11-themes/catppuccin-kvantum ~amd64
