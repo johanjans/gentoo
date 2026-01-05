@@ -1,10 +1,13 @@
 #!/bin/bash
-sleep 1
-killall -e xdg-desktop-portal-hyprland
-killall xdg-desktop-portal
-sleep 1
+# Kill any existing portal processes
+killall -e xdg-desktop-portal-hyprland 2>/dev/null
+killall -e xdg-desktop-portal 2>/dev/null
+
+# Start Hyprland portal backend
 /usr/libexec/xdg-desktop-portal-hyprland &
-logger 'xdg-desktop-portal-hyprland started'
-sleep 2
+
+# Brief wait for backend initialization
+sleep 0.5
+
+# Start main xdg-desktop-portal
 /usr/libexec/xdg-desktop-portal &
-logger 'xdg-desktop-portal started'
